@@ -1,0 +1,65 @@
+body{
+  background: #fff;
+  font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
+.img-list-container{
+  .img-list-item{
+    display: flex;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e8e8e8;
+    .thumb{
+      flex: 0 0 40px;
+      height: 40px;
+      margin-right: 15px;
+      font-size: 0;
+      border-radius: 4px;
+      > img{
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    }
+    .content{
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .filename{
+        width: 100%;
+        color: rgba(0,0,0,.65);
+        text-overflow: ellipsis;
+        line-height: 1.5;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .text{
+        display: flex;
+        font-size: 12px;
+        color: rgba(0,0,0,.45);
+        .separator{
+          margin: 0 3px;
+        }
+        .compression-ratio{
+          margin-left:15px;
+          color: #1890FF;
+        }
+      }
+    }
+    .btn-box{
+      flex: 0 0 90px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: rgba(0,0,0,.65);
+      > div{
+        flex: 1;
+        .iconfont{
+          font-size: 16px;
+          &:hover{
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}

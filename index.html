@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>imagemin</title>
+  <link rel="stylesheet" href="./styles/index.css">
+  <link rel="stylesheet" href="./styles/normalize.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_pde7isffjnd.css">
+</head>
+
+<body>
+  <div class="img-list-container">
+    <ul class="img-list">
+      <!-- <li class="img-list-item">
+        <div class="thumb">
+          <img src="./images/red_like.png" alt="缩略图">
+        </div>
+        <div class="content">
+          <div class="filename">
+            red_like.png
+          </div>
+          <div class="text">
+            <div class="new-size">
+              10.2KB
+            </div>
+            <div class="separator">/</div>            
+            <div class="old-size">
+              20.3KB
+            </div>
+            <div class="compression-ratio">
+              50%
+            </div>
+          </div>
+        </div>
+        <div class="btn-box">
+          <div class="base64">
+            <i class="iconfont icon-base64" title="base64"></i>
+          </div>
+          <div class="compare">
+            <i class="iconfont icon-compare" title="对比"></i>
+          </div>
+          <div class="location">
+            <i class="iconfont icon-location" title="定位"></i>
+          </div>
+        </div>
+      </li> -->
+    </ul>
+  </div>
+  <script>
+    const ipcRenderer = require('electron').ipcRenderer;
+    const shell = require('electron').shell;
+    const fs = require('fs');
+    window.$ = window.jQuery = require('./jquery.min.js');
+    ipcRenderer.on('file', function (event, data) {
+      let html = '';
+      if(data) {
+        html += `
+        <li class="img-list-item">
+          <div class="thumb">
+            <img src="${data.path}" alt="缩略图">
+          </div>
+          <div class="content">
+            <div class="filename">
+              ${data.name}
+            </div>
+            <div class="text">
+              <div class="new-size">
+                10.2KB
+              </div>
+              <div class="separator">/</div>            
+              <div class="old-size">
+                ${data.size}
+              </div>
+              <div class="compression-ratio">
+                50%
+              </div>
+            </div>
+          </div>
+          <div class="btn-box">
+            <div class="base64">
+              <i class="iconfont icon-base64" title="base64"></i>
+            </div>
+            <div class="compare">
+              <i class="iconfont icon-compare" title="对比"></i>
+            </div>
+            <div class="location" data-path="${data.path}">
+              <i class="iconfont icon-location" title="定位"></i>
+            </div>
+          </div>
+        </li>
+        `;
+        $('.img-list').append(html);
+      }
+    });
+    $('.img-list').on('click','.location',function(e){
+      let path = $(this).data('path');
+      shell.showItemInFolder(path);
+      fs.readFile(path,function(err,data){
+        console.log(data);
+      });
+    });
+
+    
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+body { background: #fff; font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol; }
+
+.img-list-container .img-list-item { display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: flex; padding: 15px 20px; border-bottom: 1px solid #e8e8e8; }
+
+.img-list-container .img-list-item .thumb { -webkit-box-flex: 0; -moz-box-flex: 0; -ms-flex: 0 0 40px; flex: 0 0 40px; height: 40px; margin-right: 15px; font-size: 0; border-radius: 4px; }
+
+.img-list-container .img-list-item .thumb > img { width: 100%; height: 100%; display: block; }
+
+.img-list-container .img-list-item .content { -webkit-box-flex: 1; -moz-box-flex: 1; -ms-flex: 1; flex: 1; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-orient: vertical; -webkit-box-direction: normal; -moz-box-orient: vertical; -moz-box-direction: normal; -ms-flex-direction: column; flex-direction: column; -webkit-box-pack: justify; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; }
+
+.img-list-container .img-list-item .content .filename { width: 100%; color: rgba(0, 0, 0, 0.65); text-overflow: ellipsis; line-height: 1.5; overflow: hidden; white-space: nowrap; }
+
+.img-list-container .img-list-item .content .text { display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: flex; font-size: 12px; color: rgba(0, 0, 0, 0.45); }
+
+.img-list-container .img-list-item .content .text .separator { margin: 0 3px; }
+
+.img-list-container .img-list-item .content .text .compression-ratio { margin-left: 15px; color: #1890FF; }
+
+.img-list-container .img-list-item .btn-box { -webkit-box-flex: 0; -moz-box-flex: 0; -ms-flex: 0 0 90px; flex: 0 0 90px; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; -webkit-box-pack: justify; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; color: rgba(0, 0, 0, 0.65); }
+
+.img-list-container .img-list-item .btn-box > div { -webkit-box-flex: 1; -moz-box-flex: 1; -ms-flex: 1; flex: 1; }
+
+.img-list-container .img-list-item .btn-box > div .iconfont { font-size: 16px; }
+
+.img-list-container .img-list-item .btn-box > div .iconfont:hover { cursor: pointer; }
