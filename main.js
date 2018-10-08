@@ -11,17 +11,7 @@ const template = [
       click() {
         dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'],filters: [{name: 'Images', extensions: ['jpg', 'jpeg', 'png']}]} ,function(filePaths){   
           if(filePaths){
-            filePaths.forEach(function(item){
-              let filename = path.basename(item);
-              let file = {
-                name: filename,
-                path: item
-              };
-              fs.stat(item,function(err,data){
-                file.size = data.size >= 1024 ? (data.size / 1024).toFixed(1) + 'KB' : data.size + 'B';
-                win.webContents.send('file',file);
-              });
-            });
+            win.webContents.send('filepaths',filePaths);
           }
         });
       }

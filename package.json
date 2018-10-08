@@ -1,5 +1,5 @@
 {
-  "name": "imagemin",
+  "name": "lightimage",
   "version": "1.0.0",
   "description": "图片压缩工具",
   "main": "main.js",
@@ -16,6 +16,10 @@
     "electron": "^3.0.3"
   },
   "dependencies": {
-    "base64-img": "^1.0.4"
+    "base64-img": "^1.0.4",
+    "imagemin": "^6.0.0",
+    "imagemin-mozjpeg": "^7.0.0",
+    "imagemin-pngquant": "^6.0.0",
+    "shortid": "^2.2.13"
   }
 }
