@@ -2,7 +2,9 @@ const { app, BrowserWindow, Menu, dialog } = require('electron')
 const ipcMain = require('electron').ipcMain;
 const fs = require('fs');
 const path = require('path');
-
+ipcMain.on('base64',function(event,data){
+  dialog.showMessageBox(win,{type: 'info',buttons: ['确定','复制'],defaultId: 0,title: 'base64字符串',message: '这是一条消息黄金卡刷机大师',detail: ['这是一条消息黄金卡刷机大师第三大厦大叔，','没的撒大会看到撒大客户的撒大叔看到啊打双打滑动'],noLink: true});
+})
 const template = [
   {
     label: '文件(F)',
@@ -20,7 +22,7 @@ const template = [
       label: '打开文件夹',
       click() {
         dialog.showOpenDialog({ properties: ['openDirectory', 'multiSelections'] }, function(filePaths){
-          win.webContents.send('filepath', filePaths);
+          win.webContents.send('filepaths', filePaths);
         });
       }
     }]

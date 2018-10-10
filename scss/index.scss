@@ -18,6 +18,12 @@ html,body{
     overflow: hidden;
     padding: 15px 20px;
     border-bottom: 1px solid #e8e8e8;
+    &:hover{
+      background: #f5f7fa;
+    }
+    &.active{
+      background: #f0f9eb;
+    }
     .thumb{
       flex: 0 0 40px;
       height: 40px;
@@ -53,6 +59,9 @@ html,body{
         .compression-ratio{
           margin-left:15px;
           color: #1890FF;
+          .iconfont{
+            font-size: 10px;
+          }
         }
       }
     }
@@ -76,7 +85,6 @@ html,body{
     }
   }
 }
-
 .drag-box{
   height: 200px;
   width: 300px;
@@ -86,4 +94,22 @@ html,body{
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
+  text-align: center;
+  p{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    line-height: 1.5;
+    color: rgba(0,0,0,.65);
+  }
+  .iconfont{
+    font-size: 80px;
+    color: #e8e8e8;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    z-index: -1;
+  }
 }

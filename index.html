@@ -6,7 +6,7 @@
   <title>lightimage</title>
   <link rel="stylesheet" href="./styles/index.css">
   <link rel="stylesheet" href="./styles/normalize.css">
-  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_pde7isffjnd.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_nl3np753ze.css">
 </head>
 
 <body>
@@ -46,6 +46,8 @@
         </div>
       </li> -->
       <div class="drag-box">
+        <p>请将图片拖入窗口中<br>（支持JPG PNG GIF格式）</p>
+        <i class="iconfont icon-image"></i>
       </div>
     </ul>
     
@@ -53,15 +55,19 @@
   <script>
     const ipcRenderer = require('electron').ipcRenderer;
     const shell = require('electron').shell;
+    const dialog = require('electron').dialog;
     const fs = require('fs');
     const path = require('path');
     const base64Img = require('base64-img');
     const imagemin = require('imagemin');
     const imageminPngquant = require('imagemin-pngquant');
     const imageminMozjpeg = require('imagemin-mozjpeg');
+    const imageminGifsicle = require('imagemin-gifsicle');
     const shortid = require('shortid');
+    const glob = require('glob');
     window.$ = window.jQuery = require('./jquery.min.js');
-    ipcRenderer.on('filepaths', function (event, filePaths) {
+    ipcRenderer.on('filepaths', function (event, files) {
+      let filePaths = getFilePaths(files);
       generateImage(filePaths);
     });
     $('.img-list').on('click','.location',function(e){
@@ -75,6 +81,7 @@
         if(err){
           alert('出错了');
         } else {
+          ipcRenderer.send('base64',data);
           console.log(data);
         }
       });
@@ -84,11 +91,33 @@
       event.preventDefault();
     }
     function drop(event){
-      let filePaths = [];
+      let files = [];
       for(let i = 0; i < event.dataTransfer.files.length;i++) {
-        filePaths.push(event.dataTransfer.files[i].path);
+        files.push(event.dataTransfer.files[i].path);
       }
+      let filePaths = getFilePaths(files);
       generateImage(filePaths);
+    }
+
+    function getFilePaths(fileArray) {
+      let filePaths = [];
+      for(let i = 0; i < fileArray.length;i++) {
+        let stat = fs.statSync(fileArray[i]);
+        if(stat.isDirectory()){
+          let files = glob.sync(path.join(fileArray[i],"**/**"),{matchBase: true});
+          let imageFiles = files.filter(function(item){
+            return /\.(png|jpg|gif)$/.test(item)
+          });
+          filePaths.push(...imageFiles);
+        } else {
+          if(/\.(png|jpg|gif)$/.test(fileArray[i])){
+            filePaths.push(fileArray[i]);
+          } else {
+            console.log('拖入的存在非图片格式文件');
+          }
+        }
+      }
+      return filePaths;
     }
 
     function generateImage(filePaths) {
@@ -120,6 +149,7 @@
                   <div class="new-size">
                   </div>
                   <div class="compression-ratio">
+                    <i class="iconfont icon-reduct"></i>
                   </div>
                 </div>
               </div>
@@ -139,17 +169,20 @@
             $('.img-list').append(html);
             $('.drag-box').hide();
           }
-          imagemin([item], path.dirname(item), {use: [imageminMozjpeg(),imageminPngquant({quality: '65-80'})]}).then((files) => {
+          imagemin([item], path.dirname(item), {use: [imageminMozjpeg(),imageminPngquant({quality: '65-80'}),imageminGifsicle()]}).then((files) => {
             $('#'+ id + ' .new-size').text(files[0].data.length >= 1024 ? (files[0].data.length / 1024).toFixed(1) + 'KB' : files[0].data.length + 'B');
             let ratio = ((data.size - files[0].data.length) / data.size).toFixed(2) * 100 + '%'
             $('#'+ id + ' .compression-ratio').text(ratio);
             $('#'+ id + ' .base64').data('path',item);
             $('#'+ id + ' .location').data('path',item);
-            $('#'+ id + ' .compression-ratio').text(ratio);
+            $('#'+ id + ' .compression-ratio').html(`<i class="iconfont icon-reduce"></i>${ratio}`);
           });
         });
       });
     }
+    $('.img-list').on('click','.img-list-item',function(){
+      $(this).addClass('active').siblings().removeClass('active');
+    });
   </script>
 </body>
 
