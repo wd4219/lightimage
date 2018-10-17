@@ -6,10 +6,17 @@
   <title>lightimage</title>
   <link rel="stylesheet" href="./styles/index.css">
   <link rel="stylesheet" href="./styles/normalize.css">
-  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_nl3np753ze.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_rwhxdwkvgq.css">
 </head>
 
 <body>
+  <div class="title-bar">lightimage
+    <div class="right-tool">
+      <span class="iconfont icon-min"></span>
+      <span class="iconfont icon-max"></span>
+      <span class="iconfont icon-close"></span>
+    </div>
+  </div>
   <div class="img-list-container">
     <ul class="img-list" ondrop="drop(event)" ondragover="allowDrop(event)">
       <!-- <li class="img-list-item">
@@ -74,7 +81,17 @@
       let path = $(this).data('path');
       shell.showItemInFolder(path);
     });
-
+    $('.right-tool .iconfont').click(function(){
+      let index = $(this).index();
+      if(index === 1) {
+        if($(this).hasClass('icon-max')){
+          $(this).removeClass('icon-max').addClass('icon-reset');
+        } else {
+          $(this).removeClass('icon-reset').addClass('icon-max');
+        }
+      }
+      ipcRenderer.send('window',index);
+    });
     $('.img-list').on('click', '.base64',function(e){
       let path = $(this).data('path');
       base64Img.base64(path, function(err, data) {

@@ -2,18 +2,35 @@ const { app, BrowserWindow, Menu, dialog } = require('electron')
 const ipcMain = require('electron').ipcMain;
 const fs = require('fs');
 const path = require('path');
-ipcMain.on('base64',function(event,data){
-  dialog.showMessageBox(win,{type: 'info',buttons: ['确定','复制'],defaultId: 0,title: 'base64字符串',message: '这是一条消息黄金卡刷机大师',detail: ['这是一条消息黄金卡刷机大师第三大厦大叔，','没的撒大会看到撒大客户的撒大叔看到啊打双打滑动'],noLink: true});
+var menubar = require('menubar')
+ipcMain.on('base64', function (event, data) {
+  dialog.showMessageBox(win, { type: 'info', buttons: ['确定', '复制'], defaultId: 0, title: 'base64字符串', message: '这是一条消息黄金卡刷机大师', detail: ['这是一条消息黄金卡刷机大师第三大厦大叔，', '没的撒大会看到撒大客户的撒大叔看到啊打双打滑动'], noLink: true });
 })
+ipcMain.on('window',function(event,data) {
+  if(data === 0) {
+    win.minimize();
+  }
+  if(data=== 1) {
+    console.log(win.isMinimized())
+    if(win.isMinimized()) {
+      win.unmaximize();
+    } else {
+      win.maximize();
+    }
+  } 
+  if(data === 2) {
+    win.close();
+  }
+});
 const template = [
   {
     label: '文件(F)',
     submenu: [{
       label: '打开文件',
       click() {
-        dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'],filters: [{name: 'Images', extensions: ['jpg', 'jpeg', 'png']}]} ,function(filePaths){   
-          if(filePaths){
-            win.webContents.send('filepaths',filePaths);
+        dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'], filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }] }, function (filePaths) {
+          if (filePaths) {
+            win.webContents.send('filepaths', filePaths);
           }
         });
       }
@@ -21,7 +38,7 @@ const template = [
     {
       label: '打开文件夹',
       click() {
-        dialog.showOpenDialog({ properties: ['openDirectory', 'multiSelections'] }, function(filePaths){
+        dialog.showOpenDialog({ properties: ['openDirectory', 'multiSelections'] }, function (filePaths) {
           win.webContents.send('filepaths', filePaths);
         });
       }
@@ -44,12 +61,22 @@ let win;
 
 function createWindow() {
   // 创建浏览器窗口。
-  win = new BrowserWindow({ width: 400, height: 640, minimizable: false, maximizable: false, fullscreenable: false, resizable: false });
+  win = new BrowserWindow({ width: 1000, height: 700, minimizable: false, maximizable: false, fullscreenable: false, resizable: false ,frame: false,backgroundColor:'#282c34',thickFrame: false});
   //创建菜单
   win.webContents.openDevTools()
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
-  
+  // const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(null);
+
+
+
+  var mb = menubar({
+    app:app,
+    window: win
+  })
+
+  mb.on('ready', function ready() {
+    console.log('app is ready')
+  })
   // 然后加载应用的 index.html。
   win.loadFile('index.html');
 
