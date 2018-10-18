@@ -1,0 +1,103 @@
+$background_base : #424242;
+$background_normal: #363738;
+$color_base: #888e9b;
+body{
+  background: $background_base;
+  font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
+html,body{
+  height: 100%;
+  user-select: none;
+}
+.tool-bar{
+  height: 35px;
+  line-height: 35px;
+  background: #303030;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30px;
+  > .iconfont{
+    font-size: 20px;
+    color: $color_base;
+    padding: 0 15px;
+    position: relative;
+    cursor: pointer;
+  }
+  .icon-list{
+    position: absolute;
+    right: 0;
+    &.active{
+      color: #2196f3;
+    }
+  }
+  .background-select-box{
+    width: 90px;
+    padding: 0 5px;
+    background: #fff;
+    border-radius: 2px;
+    font-size: 12px;
+    text-align: center;
+    position: absolute;
+    left: 10px;
+    display: none;
+    z-index: 2;
+    transform: translateY(-5px);
+    li{
+      height: 40px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      line-height: 40px;
+      cursor: pointer;
+      .iconfont{
+        font-size: 12px;
+        width: 14px;
+        margin-right: 10px;
+        color: #fff;
+      }
+      &.active{
+        .iconfont{
+          color: #2196f3;
+        }
+      }
+    }
+  }
+}
+.compare-container{
+  background: url('../images/background.png') repeat;
+  height: 450px;
+  width: 800px;
+  position: absolute;
+  top: 65px;
+  left: 0;
+  right: 160px;
+  .line{
+    height: 100%;
+    width: 2px;
+    background-color: #2196f3;
+    position: absolute;
+    top: 0;
+    transform: translateX(100px);
+    cursor: move;
+  }
+}
+.file-list-container{
+  position: absolute;
+  background: #303030;
+  width: 160px;
+  right: 0;
+  top: 65px;
+  bottom: 0;
+  .file-list-item{
+    padding: 10px;
+    text-align: center;
+    img{
+      max-width: 100px;
+      height: 40px;
+    }
+    opacity: 0.7;
+    &:hover{
+      background: #2196f3;
+      opacity: 1;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-$background_base : #232324;
+$background_base : #424242;
 $background_normal: #363738;
 $color_base: #888e9b;
 
@@ -8,6 +8,7 @@ body{
 }
 html,body{
   height: 100%;
+  user-select: none;
 }
 .title-bar{
   height: 30px;
@@ -41,6 +42,8 @@ html,body{
 }
 .img-list-container{
   height: 100%;
+  box-sizing: border-box;
+  padding-top: 30px;
   .img-list{
     min-height: 100%;
     overflow-x: auto;
@@ -50,13 +53,28 @@ html,body{
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
-    padding: 15px 20px;
-    border-bottom: 1px solid #e8e8e8;
+    padding: 15px 20px 15px 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    position: relative;
+    > .iconfont{
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      font-size: 20px;
+      transform: translateY(-50%);
+    }
+    .icon-success{
+      color: #76ff03;
+    }
+    .icon-failure{
+      color: #f44336;
+    }
     &:hover{
-      background: #f5f7fa;
+      background: rgba(255, 255, 255, 0.1);
     }
     &.active{
-      background: #f0f9eb;
+      background: rgba(255, 255, 255, 0.3)
     }
     .thumb{
       flex: 0 0 40px;
@@ -77,7 +95,6 @@ html,body{
       justify-content: space-between;
       overflow: hidden;
       .filename{
-        color: rgba(0,0,0,.65);
         text-overflow: ellipsis;
         line-height: 1.5;
         overflow: hidden;
@@ -86,13 +103,13 @@ html,body{
       .text{
         display: flex;
         font-size: 12px;
-        color: rgba(0,0,0,.45);
+        color: rgba(255, 255, 255, 0.7);
         .separator{
           margin: 0 3px;
         }
         .compression-ratio{
           margin-left:15px;
-          color: #1890FF;
+          color: #76ff03;
           .iconfont{
             font-size: 10px;
           }
@@ -111,6 +128,7 @@ html,body{
         text-align: center;
         .iconfont{
           font-size: 16px;
+          color: rgba(255, 255, 255, 0.7);
           &:hover{
             cursor: pointer;
           }

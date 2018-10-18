@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>对比</title>
+  <link rel="stylesheet" href="./styles/normalize.css">
+  <link rel="stylesheet" href="./styles/index.css">
+  <link rel="stylesheet" href="./styles/compare.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_adb2x2i9krd.css">
+</head>
+
+<body>
+  <div class="title-bar">对比
+    <div class="right-tool">
+      <span class="iconfont icon-min"></span>
+      <span class="iconfont icon-max"></span>
+      <span class="iconfont icon-close"></span>
+    </div>
+  </div>
+  <div class="tool-bar">
+    <i class="iconfont icon-background">
+      <div class="background-select-box">
+        <ul>
+          <li class="active"><i class="iconfont icon-check-circle"></i>默认背景</li>
+          <li><i class="iconfont icon-check-circle"></i>白色背景</li>
+          <li><i class="iconfont icon-check-circle"></i>透明背景</li>
+        </ul>
+      </div>
+    </i>
+    <i class="iconfont icon-list active"></i>
+  </div>
+  <div class="compare-container">
+    <div class="line"></div>
+  </div>
+  <div class="file-list-container">
+    <ul class="file-list">
+      <li class="file-list-item">
+        <img src="./images/red_like.png" alt="">
+      </li>
+    </ul>
+  </div>
+  <script>
+    const {remote, ipcRenderer, shell, dialog} = require('electron');
+    const fs = require('fs');
+    const path = require('path');
+    const shortid = require('shortid');
+    const glob = require('glob');
+    window.$ = window.jQuery = require('./jquery.min.js');
+    $('.right-tool .iconfont').click(function(){
+      let index = $(this).index();
+      let window = remote.BrowserWindow.getFocusedWindow();
+      if(index === 1) {
+        if(!window.isMaximized()){
+          $(this).removeClass('icon-max').addClass('icon-reset');
+          window.maximize();
+        } else {
+          $(this).removeClass('icon-reset').addClass('icon-max');
+          window.unmaximize();
+        }
+      } else if(index === 0) {
+        window.minimize();
+      } else {
+        window.close();
+      }
+    });
+    $('.title-bar').dblclick(function () {
+      let window = remote.BrowserWindow.getFocusedWindow();
+      if (!window.isMaximized()) {
+        $(this).find('.iconfont').eq(1).removeClass('icon-max').addClass('icon-reset');
+        window.maximize();
+      } else {
+        $(this).find('.iconfont').eq(1).removeClass('icon-reset').addClass('icon-max');
+        window.unmaximize();
+      }
+    });
+    $('.icon-background').on('click',function(){
+      $(this).find('.background-select-box').slideToggle();
+    });
+    $('.icon-background').on('click',function(){
+      $(this).find('.background-select-box').slideToggle();
+    });
+  </script>
+</body>
+
+</html>

@@ -6,7 +6,7 @@
   <title>lightimage</title>
   <link rel="stylesheet" href="./styles/index.css">
   <link rel="stylesheet" href="./styles/normalize.css">
-  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_rwhxdwkvgq.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_lshxokbwgn.css">
 </head>
 
 <body>
@@ -19,7 +19,8 @@
   </div>
   <div class="img-list-container">
     <ul class="img-list" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <!-- <li class="img-list-item">
+      <li class="img-list-item">
+        <i class="iconfont icon-success"></i>
         <div class="thumb">
           <img src="./images/red_like.png" alt="缩略图">
         </div>
@@ -31,12 +32,13 @@
             <div class="new-size">
               10.2KB
             </div>
-            <div class="separator">/</div>            
+            <div class="separator">/</div>
             <div class="old-size">
               20.3KB
             </div>
             <div class="compression-ratio">
               50%
+              <i class="iconfont icon-ratio"></i>
             </div>
           </div>
         </div>
@@ -51,18 +53,16 @@
             <i class="iconfont icon-location" title="定位"></i>
           </div>
         </div>
-      </li> -->
+      </li>
       <div class="drag-box">
         <p>请将图片拖入窗口中<br>（支持JPG PNG GIF格式）</p>
         <i class="iconfont icon-image"></i>
       </div>
     </ul>
-    
+
   </div>
   <script>
-    const ipcRenderer = require('electron').ipcRenderer;
-    const shell = require('electron').shell;
-    const dialog = require('electron').dialog;
+    const { remote, ipcRenderer, shell, dialog } = require('electron');
     const fs = require('fs');
     const path = require('path');
     const base64Img = require('base64-img');
@@ -77,39 +77,60 @@
       let filePaths = getFilePaths(files);
       generateImage(filePaths);
     });
-    $('.img-list').on('click','.location',function(e){
+    $('.img-list').on('click', '.location', function (e) {
       let path = $(this).data('path');
       shell.showItemInFolder(path);
     });
-    $('.right-tool .iconfont').click(function(){
+    $('.right-tool .iconfont').click(function (e) {
       let index = $(this).index();
-      if(index === 1) {
-        if($(this).hasClass('icon-max')){
+      let window = remote.BrowserWindow.getFocusedWindow();
+      if (index === 1) {
+        if ($(this).hasClass('icon-max')) {
           $(this).removeClass('icon-max').addClass('icon-reset');
+          window.maximize();
         } else {
           $(this).removeClass('icon-reset').addClass('icon-max');
+          window.unmaximize();
         }
+      } else if (index === 0) {
+        window.minimize();
+      } else {
+        window.close();
       }
-      ipcRenderer.send('window',index);
+      e.stopPropagation();
     });
-    $('.img-list').on('click', '.base64',function(e){
+    $('.title-bar').dblclick(function () {
+      let window = remote.BrowserWindow.getFocusedWindow();
+      if ($(this).find('.iconfont').eq(1).hasClass('icon-max')) {
+        $(this).find('.iconfont').eq(1).removeClass('icon-max').addClass('icon-reset');
+        window.maximize();
+      } else {
+        $(this).find('.iconfont').eq(1).removeClass('icon-reset').addClass('icon-max');
+        window.unmaximize();
+      }
+    });
+    $('.img-list').on('click', '.base64', function (e) {
       let path = $(this).data('path');
-      base64Img.base64(path, function(err, data) {
-        if(err){
+      base64Img.base64(path, function (err, data) {
+        if (err) {
           alert('出错了');
         } else {
-          ipcRenderer.send('base64',data);
+          ipcRenderer.send('base64', data);
           console.log(data);
         }
       });
     });
 
-    function allowDrop(event){
+    $('.img-list').on('click', '.compare', function (e) {
+      let data = {};
+      ipcRenderer.send('compare', data);
+    });
+    function allowDrop(event) {
       event.preventDefault();
     }
-    function drop(event){
+    function drop(event) {
       let files = [];
-      for(let i = 0; i < event.dataTransfer.files.length;i++) {
+      for (let i = 0; i < event.dataTransfer.files.length; i++) {
         files.push(event.dataTransfer.files[i].path);
       }
       let filePaths = getFilePaths(files);
@@ -118,16 +139,16 @@
 
     function getFilePaths(fileArray) {
       let filePaths = [];
-      for(let i = 0; i < fileArray.length;i++) {
+      for (let i = 0; i < fileArray.length; i++) {
         let stat = fs.statSync(fileArray[i]);
-        if(stat.isDirectory()){
-          let files = glob.sync(path.join(fileArray[i],"**/**"),{matchBase: true});
-          let imageFiles = files.filter(function(item){
+        if (stat.isDirectory()) {
+          let files = glob.sync(path.join(fileArray[i], "**/**"), { matchBase: true });
+          let imageFiles = files.filter(function (item) {
             return /\.(png|jpg|gif)$/.test(item)
           });
           filePaths.push(...imageFiles);
         } else {
-          if(/\.(png|jpg|gif)$/.test(fileArray[i])){
+          if (/\.(png|jpg|gif)$/.test(fileArray[i])) {
             filePaths.push(fileArray[i]);
           } else {
             console.log('拖入的存在非图片格式文件');
@@ -139,18 +160,19 @@
 
     function generateImage(filePaths) {
       let html = '';
-      filePaths.forEach(function(item){
+      filePaths.forEach(function (item) {
         let filename = path.basename(item);
         let file = {
           name: filename,
           path: item
         };
-        fs.stat(item, function(err,data){
+        fs.stat(item, function (err, data) {
           file.size = data.size >= 1024 ? (data.size / 1024).toFixed(1) + 'KB' : data.size + 'B';
           let id = shortid.generate();
-          if(file) {
+          if (file) {
             html = `
             <li class="img-list-item" id="${id}">
+              <i class="iconfont"></i>
               <div class="thumb">
                 <img src="${file.path}" alt="缩略图">
               </div>
@@ -186,18 +208,19 @@
             $('.img-list').append(html);
             $('.drag-box').hide();
           }
-          imagemin([item], path.dirname(item), {use: [imageminMozjpeg(),imageminPngquant({quality: '65-80'}),imageminGifsicle()]}).then((files) => {
-            $('#'+ id + ' .new-size').text(files[0].data.length >= 1024 ? (files[0].data.length / 1024).toFixed(1) + 'KB' : files[0].data.length + 'B');
+          imagemin([item], path.dirname(item), { use: [imageminMozjpeg(), imageminPngquant({ quality: '65-80' }), imageminGifsicle()] }).then((files) => {
+            $('#' + id + ' .new-size').text(files[0].data.length >= 1024 ? (files[0].data.length / 1024).toFixed(1) + 'KB' : files[0].data.length + 'B');
             let ratio = ((data.size - files[0].data.length) / data.size).toFixed(2) * 100 + '%'
-            $('#'+ id + ' .compression-ratio').text(ratio);
-            $('#'+ id + ' .base64').data('path',item);
-            $('#'+ id + ' .location').data('path',item);
-            $('#'+ id + ' .compression-ratio').html(`<i class="iconfont icon-reduce"></i>${ratio}`);
+            $('#' + id + ' .compression-ratio').text(ratio);
+            $('#' + id + ' .base64').data('path', item);
+            $('#' + id + ' .location').data('path', item);
+            $('#' + id + '> .iconfont').addClass('icon-success');
+            $('#' + id + ' .compression-ratio').html(`<i class="iconfont icon-reduce"></i>${ratio}`);
           });
         });
       });
     }
-    $('.img-list').on('click','.img-list-item',function(){
+    $('.img-list').on('click', '.img-list-item', function () {
       $(this).addClass('active').siblings().removeClass('active');
     });
   </script>
