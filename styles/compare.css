@@ -1,31 +1,160 @@
-body { background: #424242; font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol; }
+body {
+  background: #424242;
+  font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
 
-html, body { height: 100%; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+html, body {
+  height: 100%;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
 
-.tool-bar { height: 35px; line-height: 35px; background: #303030; position: absolute; left: 0; right: 0; top: 30px; }
+.tool-bar {
+  height: 35px;
+  line-height: 35px;
+  background: #303030;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30px;
+}
 
-.tool-bar > .iconfont { font-size: 20px; color: #888e9b; padding: 0 15px; position: relative; cursor: pointer; }
+.tool-bar > .iconfont {
+  font-size: 20px;
+  color: #888e9b;
+  padding: 0 15px;
+  position: relative;
+  cursor: pointer;
+}
 
-.tool-bar .icon-list { position: absolute; right: 0; }
+.tool-bar .icon-list {
+  position: absolute;
+  right: 0;
+}
 
-.tool-bar .icon-list.active { color: #2196f3; }
+.tool-bar .icon-list.active {
+  color: #2196f3;
+}
 
-.tool-bar .background-select-box { width: 90px; padding: 0 5px; background: #fff; border-radius: 2px; font-size: 12px; text-align: center; position: absolute; left: 10px; display: none; z-index: 2; -webkit-transform: translateY(-5px); transform: translateY(-5px); }
+.tool-bar .background-select-box {
+  width: 90px;
+  padding: 0 5px;
+  background: #fff;
+  border-radius: 2px;
+  font-size: 12px;
+  text-align: center;
+  position: absolute;
+  display: none;
+  z-index: 2;
+  -webkit-transform: translate(5px, -5px);
+          transform: translate(5px, -5px);
+}
 
-.tool-bar .background-select-box li { height: 40px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); line-height: 40px; cursor: pointer; }
+.tool-bar .background-select-box li {
+  height: 40px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  line-height: 40px;
+  cursor: pointer;
+}
 
-.tool-bar .background-select-box li .iconfont { font-size: 12px; width: 14px; margin-right: 10px; color: #fff; }
+.tool-bar .background-select-box li .iconfont {
+  font-size: 12px;
+  width: 14px;
+  margin-right: 10px;
+  color: #fff;
+}
 
-.tool-bar .background-select-box li.active .iconfont { color: #2196f3; }
+.tool-bar .background-select-box li.active .iconfont {
+  color: #2196f3;
+}
 
-.compare-container { background: url("../images/background.png") repeat; height: 450px; width: 800px; position: absolute; top: 65px; left: 0; right: 160px; }
+.compare-container {
+  background: url("../images/background.png") repeat;
+  height: 450px;
+  position: absolute;
+  top: 65px;
+  left: 0;
+  right: 160px;
+}
 
-.compare-container .line { height: 100%; width: 2px; background-color: #2196f3; position: absolute; top: 0; -webkit-transform: translateX(100px); transform: translateX(100px); cursor: move; }
+.compare-container.full {
+  right: 0;
+}
 
-.file-list-container { position: absolute; background: #303030; width: 160px; right: 0; top: 65px; bottom: 0; }
+.compare-container .line {
+  height: 100%;
+  width: 2px;
+  background-color: #2196f3;
+  position: absolute;
+  top: 0;
+  -webkit-transform: translateX(100px);
+          transform: translateX(100px);
+  cursor: move;
+}
 
-.file-list-container .file-list-item { padding: 10px; text-align: center; opacity: 0.7; }
+.file-list-container {
+  position: absolute;
+  background: #303030;
+  width: 160px;
+  right: 0;
+  top: 65px;
+  bottom: 0;
+}
 
-.file-list-container .file-list-item img { max-width: 100px; height: 40px; }
+.file-list-container .file-list-item {
+  padding: 10px;
+  text-align: center;
+  opacity: 0.7;
+}
 
-.file-list-container .file-list-item:hover { background: #2196f3; opacity: 1; }
+.file-list-container .file-list-item img {
+  max-width: 100px;
+  height: 40px;
+}
+
+.file-list-container .file-list-item:hover {
+  background: #2196f3;
+  opacity: 1;
+}
+
+.info-container {
+  color: #fff;
+  position: absolute;
+  top: 515px;
+  left: 0;
+  padding: 20px;
+}
+
+.info-container .info-item {
+  height: 40px;
+  line-height: 40px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.info-container .info-item:nth-child(2) .progress {
+  width: 300px;
+}
+
+.info-container .info-item .label {
+  width: 90px;
+}
+
+.info-container .info-item .progress {
+  width: 400px;
+  height: 8px;
+  background: #2196f3;
+  margin-right: 15px;
+}
+
+.info-container .info-item .size .iconfont {
+  margin-right: 15px;
+  cursor: pointer;
+  color: #2196f3;
+}

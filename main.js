@@ -2,7 +2,6 @@ const { app, BrowserWindow, Menu, dialog } = require('electron')
 const ipcMain = require('electron').ipcMain;
 const fs = require('fs');
 const path = require('path');
-var menubar = require('menubar')
 ipcMain.on('base64', function (event, data) {
   dialog.showMessageBox(win, { type: 'info', buttons: ['确定', '复制'], defaultId: 0, title: 'base64字符串', message: '这是一条消息黄金卡刷机大师', detail: ['这是一条消息黄金卡刷机大师第三大厦大叔，', '没的撒大会看到撒大客户的撒大叔看到啊打双打滑动'], noLink: true });
 });
@@ -10,6 +9,7 @@ ipcMain.on('base64', function (event, data) {
 ipcMain.on('compare',function(event,data) {
   let compare = new BrowserWindow({frame: false, backgroundColor:'#424242',title: '对比',width: 960,height:720});
   compare.loadFile('./compare.html');
+  compare.webContents.openDevTools();
   compare.once('ready-to-show',function(){
     compare.show();
   });
@@ -20,18 +20,11 @@ let win;
 function createWindow() {
   win = new BrowserWindow({ width: 450, height: 700, fullscreenable: false, resizable: false ,frame: false,backgroundColor:'#424242'});
   //创建菜单
-  win.webContents.openDevTools()
+  win.webContents.openDevTools();
   // const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(null);
 
-
-
-  var mb = menubar({
-    app:app,
-    window: win
-  })
-
-  mb.on('ready', function ready() {
+  app.on('ready', function ready() {
     console.log('app is ready')
   })
   // 然后加载应用的 index.html。

@@ -39,10 +39,9 @@ html,body{
     font-size: 12px;
     text-align: center;
     position: absolute;
-    left: 10px;
     display: none;
     z-index: 2;
-    transform: translateY(-5px);
+    transform: translate(5px,-5px);
     li{
       height: 40px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -65,11 +64,13 @@ html,body{
 .compare-container{
   background: url('../images/background.png') repeat;
   height: 450px;
-  width: 800px;
   position: absolute;
   top: 65px;
   left: 0;
   right: 160px;
+  &.full{
+    right: 0;
+  }
   .line{
     height: 100%;
     width: 2px;
@@ -98,6 +99,40 @@ html,body{
     &:hover{
       background: #2196f3;
       opacity: 1;
+    }
+  }
+}
+.info-container{
+  color: #fff;
+  position: absolute;
+  top: 515px;
+  left: 0;
+  padding: 20px;
+  .info-item{
+    height: 40px;
+    line-height: 40px;
+    display: flex;
+    align-items: center;
+    &:nth-child(2){
+      .progress{
+        width: 300px;
+      }
+    }
+    .label{
+      width: 90px;
+    }
+    .progress{
+      width: 400px;
+      height: 8px;
+      background: #2196f3;
+      margin-right: 15px;
+    }
+    .size{
+      .iconfont{
+        margin-right: 15px;
+        cursor: pointer;
+        color: #2196f3;
+      }
     }
   }
 }

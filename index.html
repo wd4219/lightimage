@@ -44,7 +44,8 @@
         </div>
         <div class="btn-box">
           <div class="base64">
-            <i class="iconfont icon-base64" title="base64"></i>
+            <span class="text">复制成功</span>
+            <i class="iconfont icon-base64" title="复制base64字符串"></i>
           </div>
           <div class="compare">
             <i class="iconfont icon-compare" title="对比"></i>
@@ -62,7 +63,7 @@
 
   </div>
   <script>
-    const { remote, ipcRenderer, shell, dialog } = require('electron');
+    const { remote, ipcRenderer, shell, dialog,clipboard } = require('electron');
     const fs = require('fs');
     const path = require('path');
     const base64Img = require('base64-img');
@@ -111,12 +112,15 @@
     });
     $('.img-list').on('click', '.base64', function (e) {
       let path = $(this).data('path');
-      base64Img.base64(path, function (err, data) {
+      base64Img.base64(path, (err, data)=> {
         if (err) {
           alert('出错了');
         } else {
-          ipcRenderer.send('base64', data);
-          console.log(data);
+          clipboard.writeText(data);
+          $(this).find('.text').addClass('show');
+          setTimeout(()=>{
+            $(this).find('.text').removeClass('show');
+          },400);
         }
       });
     });
@@ -194,6 +198,7 @@
               </div>
               <div class="btn-box">
                 <div class="base64">
+                  <span class="text">复制成功</span>
                   <i class="iconfont icon-base64" title="base64"></i>
                 </div>
                 <div class="compare">

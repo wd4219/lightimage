@@ -33,6 +33,28 @@
   <div class="compare-container">
     <div class="line"></div>
   </div>
+  <div class="info-container">
+    <div class="info-item">
+      <div class="label">原图</div>
+      <div class="progress"></div>
+      <div class="size"><i class="iconfont icon-compare"></i>10.0KB</div>
+    </div>
+    <div class="info-item">
+      <div class="label">压缩后</div>
+      <div class="progress"></div>
+      <div class="size">10.0KB</div>
+    </div>
+    <div class="info-item">
+      <div class="label">转为jpg</div>
+      <div class="progress"></div>
+      <div class="size">10.0KB</div>
+    </div>
+    <div class="info-item">
+      <div class="label">转为webp</div>
+      <div class="progress"></div>
+      <div class="size">10.0KB</div>
+    </div>
+  </div>
   <div class="file-list-container">
     <ul class="file-list">
       <li class="file-list-item">
@@ -77,8 +99,22 @@
     $('.icon-background').on('click',function(){
       $(this).find('.background-select-box').slideToggle();
     });
-    $('.icon-background').on('click',function(){
-      $(this).find('.background-select-box').slideToggle();
+    $('.icon-background').on('click','li',function(e){
+      let index = $(this).index();
+      if(index === 0) {
+        $('.compare-container').css({background:'#424242'});
+      } else if(index === 2) {
+        $('.compare-container').css({background:`url('./images/background.png') repeat`});
+      } else {
+        $('.compare-container').css({background:'#fff'});
+      }
+      $(this).addClass('active').siblings().removeClass('active');
+      e.stopPropagation();
+    });
+    $('.icon-list').on('click',function(){
+      $(this).toggleClass('active');
+      $('.compare-container').toggleClass('full');
+      $('.file-list-container').toggle();
     });
   </script>
 </body>
