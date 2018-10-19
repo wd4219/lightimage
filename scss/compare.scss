@@ -61,15 +61,29 @@ html,body{
     }
   }
 }
-.compare-container{
-  background: url('../images/background.png') repeat;
-  height: 450px;
-  position: absolute;
+.main-container{
   top: 65px;
-  left: 0;
   right: 160px;
+  bottom: 0;
+  left: 0;
+  position: absolute;
   &.full{
     right: 0;
+  }
+}
+.compare-container{
+  background: #424242;
+  height: 450px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  > div{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
   }
   .line{
     height: 100%;
@@ -79,6 +93,7 @@ html,body{
     top: 0;
     transform: translateX(100px);
     cursor: move;
+    z-index: 2;
   }
 }
 .file-list-container{
@@ -105,8 +120,11 @@ html,body{
 .info-container{
   color: #fff;
   position: absolute;
-  top: 515px;
+  top: 450px;
+  right: 0;
+  bottom: 0;
   left: 0;
+  background: #303030;
   padding: 20px;
   .info-item{
     height: 40px;
@@ -129,7 +147,7 @@ html,body{
     }
     .size{
       .iconfont{
-        margin-right: 15px;
+        margin-left: 15px;
         cursor: pointer;
         color: #2196f3;
       }

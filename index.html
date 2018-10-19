@@ -43,15 +43,15 @@
           </div>
         </div>
         <div class="btn-box">
-          <div class="base64">
+          <div class="base64" title="复制base64字符串">
             <span class="text">复制成功</span>
-            <i class="iconfont icon-base64" title="复制base64字符串"></i>
+            <i class="iconfont icon-base64"></i>
           </div>
-          <div class="compare">
-            <i class="iconfont icon-compare" title="对比"></i>
+          <div class="compare" title="对比">
+            <i class="iconfont icon-compare"></i>
           </div>
-          <div class="location">
-            <i class="iconfont icon-location" title="定位"></i>
+          <div class="location" title="定位">
+            <i class="iconfont icon-location"></i>
           </div>
         </div>
       </li>
@@ -63,7 +63,7 @@
 
   </div>
   <script>
-    const { remote, ipcRenderer, shell, dialog,clipboard } = require('electron');
+    const { remote, ipcRenderer, shell, dialog, clipboard } = require('electron');
     const fs = require('fs');
     const path = require('path');
     const base64Img = require('base64-img');
@@ -74,6 +74,8 @@
     const shortid = require('shortid');
     const glob = require('glob');
     window.$ = window.jQuery = require('./jquery.min.js');
+    const URL = window.URL;
+    console.log(window.URL.createObjectURL);
     ipcRenderer.on('filepaths', function (event, files) {
       let filePaths = getFilePaths(files);
       generateImage(filePaths);
@@ -112,17 +114,18 @@
     });
     $('.img-list').on('click', '.base64', function (e) {
       let path = $(this).data('path');
-      base64Img.base64(path, (err, data)=> {
+      base64Img.base64(path, (err, data) => {
         if (err) {
           alert('出错了');
         } else {
           clipboard.writeText(data);
           $(this).find('.text').addClass('show');
-          setTimeout(()=>{
+          setTimeout(() => {
             $(this).find('.text').removeClass('show');
-          },400);
+          }, 400);
         }
       });
+      e.stopPropagation();
     });
 
     $('.img-list').on('click', '.compare', function (e) {
@@ -136,7 +139,9 @@
       let files = [];
       for (let i = 0; i < event.dataTransfer.files.length; i++) {
         files.push(event.dataTransfer.files[i].path);
+        console.log(URL.createObjectURL(event.dataTransfer.files[i]));
       }
+      
       let filePaths = getFilePaths(files);
       generateImage(filePaths);
     }
@@ -213,9 +218,10 @@
             $('.img-list').append(html);
             $('.drag-box').hide();
           }
+
           imagemin([item], path.dirname(item), { use: [imageminMozjpeg(), imageminPngquant({ quality: '65-80' }), imageminGifsicle()] }).then((files) => {
             $('#' + id + ' .new-size').text(files[0].data.length >= 1024 ? (files[0].data.length / 1024).toFixed(1) + 'KB' : files[0].data.length + 'B');
-            let ratio = ((data.size - files[0].data.length) / data.size).toFixed(2) * 100 + '%'
+            let ratio = ((data.size - files[0].data.length) / data.size * 100).toFixed(0) + '%';
             $('#' + id + ' .compression-ratio').text(ratio);
             $('#' + id + ' .base64').data('path', item);
             $('#' + id + ' .location').data('path', item);

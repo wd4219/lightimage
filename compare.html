@@ -30,29 +30,38 @@
     </i>
     <i class="iconfont icon-list active"></i>
   </div>
-  <div class="compare-container">
-    <div class="line"></div>
-  </div>
-  <div class="info-container">
-    <div class="info-item">
-      <div class="label">原图</div>
-      <div class="progress"></div>
-      <div class="size"><i class="iconfont icon-compare"></i>10.0KB</div>
+  <div class="main-container">
+    <div class="compare-container">
+      <div class="origin-container" style="z-index:0;background:url('./images/cd56d121f93f322c6c4de8408180f5f8.jpg') no-repeat center center; background-size: auto 450px; height:100%;"></div>
+      <div class="line"></div>
+      <div class="new-container" style="height:100%; width: 100%;">
+        <div class="img-container" style="height:100%;overflow:hidden;float: right;">
+          <img src="./images/20181017190510.png" alt="" style="height:450px; display:block;position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%);">
+        </div>
+      </div>
     </div>
-    <div class="info-item">
-      <div class="label">压缩后</div>
-      <div class="progress"></div>
-      <div class="size">10.0KB</div>
-    </div>
-    <div class="info-item">
-      <div class="label">转为jpg</div>
-      <div class="progress"></div>
-      <div class="size">10.0KB</div>
-    </div>
-    <div class="info-item">
-      <div class="label">转为webp</div>
-      <div class="progress"></div>
-      <div class="size">10.0KB</div>
+    <div class="info-container">
+      <div class="info-item">
+        <div class="label">原图</div>
+        <div class="progress"></div>
+        <div class="size">10.0KB <i class="iconfont icon-compare" title="对比"></i><i class="iconfont icon-download"
+            title="下载"></i></div>
+      </div>
+      <div class="info-item">
+        <div class="label">压缩后</div>
+        <div class="progress"></div>
+        <div class="size">10.0KB</div>
+      </div>
+      <div class="info-item">
+        <div class="label">转为jpg</div>
+        <div class="progress"></div>
+        <div class="size">10.0KB</div>
+      </div>
+      <div class="info-item">
+        <div class="label">转为webp</div>
+        <div class="progress"></div>
+        <div class="size">10.0KB</div>
+      </div>
     </div>
   </div>
   <div class="file-list-container">
@@ -63,24 +72,24 @@
     </ul>
   </div>
   <script>
-    const {remote, ipcRenderer, shell, dialog} = require('electron');
+    const { remote, ipcRenderer, shell, dialog } = require('electron');
     const fs = require('fs');
     const path = require('path');
     const shortid = require('shortid');
     const glob = require('glob');
     window.$ = window.jQuery = require('./jquery.min.js');
-    $('.right-tool .iconfont').click(function(){
+    $('.right-tool .iconfont').click(function () {
       let index = $(this).index();
       let window = remote.BrowserWindow.getFocusedWindow();
-      if(index === 1) {
-        if(!window.isMaximized()){
+      if (index === 1) {
+        if (!window.isMaximized()) {
           $(this).removeClass('icon-max').addClass('icon-reset');
           window.maximize();
         } else {
           $(this).removeClass('icon-reset').addClass('icon-max');
           window.unmaximize();
         }
-      } else if(index === 0) {
+      } else if (index === 0) {
         window.minimize();
       } else {
         window.close();
@@ -96,25 +105,32 @@
         window.unmaximize();
       }
     });
-    $('.icon-background').on('click',function(){
+    $('.icon-background').on('click', function () {
       $(this).find('.background-select-box').slideToggle();
     });
-    $('.icon-background').on('click','li',function(e){
+    $('.icon-background').on('click', 'li', function (e) {
       let index = $(this).index();
-      if(index === 0) {
-        $('.compare-container').css({background:'#424242'});
-      } else if(index === 2) {
-        $('.compare-container').css({background:`url('./images/background.png') repeat`});
+      if (index === 0) {
+        $('.compare-container').css({ background: '#424242' });
+      } else if (index === 2) {
+        $('.compare-container').css({ background: `url('./images/background.png') repeat` });
       } else {
-        $('.compare-container').css({background:'#fff'});
+        $('.compare-container').css({ background: '#fff' });
       }
       $(this).addClass('active').siblings().removeClass('active');
       e.stopPropagation();
     });
-    $('.icon-list').on('click',function(){
+    $('.icon-list').on('click', function () {
       $(this).toggleClass('active');
-      $('.compare-container').toggleClass('full');
+      $('.main-container').toggleClass('full');
       $('.file-list-container').toggle();
+    });
+
+    $('.compare-container').mousemove(function (e) {
+      // values: e.clientX, e.clientY, e.pageX, e.pageY
+      $(this).find('.line').css({ 'transform': `translateX(${e.clientX}px)` });
+      let width = $(this).width();
+      $(this).find('.new-container .img-container').css({'width': width - e.clientX + 'px'});
     });
   </script>
 </body>
