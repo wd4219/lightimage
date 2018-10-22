@@ -75,7 +75,6 @@
     const glob = require('glob');
     window.$ = window.jQuery = require('./jquery.min.js');
     const URL = window.URL;
-    console.log(window.URL.createObjectURL);
     ipcRenderer.on('filepaths', function (event, files) {
       let filePaths = getFilePaths(files);
       generateImage(filePaths);
