@@ -2,7 +2,7 @@ body { background: #424242; font-family: Chinese Quote,-apple-system,BlinkMacSys
 
 html, body { height: 100%; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
 
-.tool-bar { height: 35px; line-height: 35px; background: #303030; position: absolute; left: 0; right: 0; top: 30px; }
+.tool-bar { height: 35px; line-height: 35px; background: #303030; position: absolute; left: 0; right: 0; z-index: 4; top: 30px; }
 
 .tool-bar > .iconfont { font-size: 20px; color: #888e9b; padding: 0 15px; position: relative; cursor: pointer; }
 
@@ -22,11 +22,15 @@ html, body { height: 100%; -webkit-user-select: none; -moz-user-select: none; -m
 
 .main-container.full { right: 0; }
 
-.compare-container { background: #424242; height: 450px; position: absolute; top: 0; left: 0; right: 0; }
+.compare-container { height: 450px; position: absolute; top: 0; left: 0; right: 0; background: #424242; }
 
-.compare-container > div { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+.compare-container .line { height: 100%; width: 2px; bottom: 0; background-color: #2196f3; position: absolute; top: 0; -webkit-transform: translateX(100px); transform: translateX(100px); cursor: move; z-index: 3; }
 
-.compare-container .line { height: 100%; width: 2px; background-color: #2196f3; position: absolute; top: 0; -webkit-transform: translateX(100px); transform: translateX(100px); cursor: move; z-index: 2; }
+.compare-container .line .text { font-size: 12px; color: #2196f3; top: 50%; width: 60px; position: absolute; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+
+.compare-container .line .text:first-child { left: -70px; text-align: right; }
+
+.compare-container .line .text:last-child { left: 10px; }
 
 .file-list-container { position: absolute; background: #303030; width: 160px; right: 0; top: 65px; bottom: 0; }
 

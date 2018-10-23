@@ -138,7 +138,7 @@
       let files = [];
       for (let i = 0; i < event.dataTransfer.files.length; i++) {
         files.push(event.dataTransfer.files[i].path);
-        console.log(URL.createObjectURL(event.dataTransfer.files[i]));
+        console.log((event.dataTransfer.files[i]));
       }
       
       let filePaths = getFilePaths(files);
@@ -219,6 +219,7 @@
           }
 
           imagemin([item], path.dirname(item), { use: [imageminMozjpeg(), imageminPngquant({ quality: '65-80' }), imageminGifsicle()] }).then((files) => {
+            console.log(files[0]);
             $('#' + id + ' .new-size').text(files[0].data.length >= 1024 ? (files[0].data.length / 1024).toFixed(1) + 'KB' : files[0].data.length + 'B');
             let ratio = ((data.size - files[0].data.length) / data.size * 100).toFixed(0) + '%';
             $('#' + id + ' .compression-ratio').text(ratio);

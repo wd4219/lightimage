@@ -32,12 +32,15 @@
   </div>
   <div class="main-container">
     <div class="compare-container">
-      <div class="origin-container" style="z-index:0;background:url('./images/cd56d121f93f322c6c4de8408180f5f8.jpg') no-repeat center center; background-size: auto 450px; height:100%;"></div>
-      <div class="line"></div>
-      <div class="new-container" style="height:100%; width: 100%;">
-        <div class="img-container" style="height:100%;overflow:hidden;position: relative;float:right;">
-          <img src="./images/20181017190510.png" alt="" style="height:450px; display:block;position: absolute;right:20px;top: 50%;transform: translateY(-50%);">
-        </div>
+      <div class="origin-container" style="height:100%;width:100%;position:relative;overflow: hidden;">
+        <img src="./images/1.jpg" alt="" style="height: 100%;position: absolute;">
+      </div>
+      <div class="line">
+        <div class="text">原图</div>
+        <div class="text">压缩后</div>
+      </div>
+      <div class="new-container" style="height:100%; width: 100%; position: absolute;overflow: hidden;right:0;top:0;z-index:2;">
+        <img src="./images/2.jpg" alt="" style="height: 100%;position: absolute;">
       </div>
     </div>
     <div class="info-container">
@@ -124,13 +127,19 @@
       $(this).toggleClass('active');
       $('.main-container').toggleClass('full');
       $('.file-list-container').toggle();
+      changeImagePosition();
     });
-
+    function changeImagePosition() {
+      let imgWidth = $('.origin-container').find('img').width();
+      let width = $('.origin-container').width();
+      $('.origin-container img').css({'right': (width-imgWidth)/2 + 'px',width: imgWidth + 'px'});
+      $('.new-container img').css({'right': (width-imgWidth)/2 + 'px',width: imgWidth + 'px'});
+    }
+    changeImagePosition();
     $('.compare-container').mousemove(function (e) {
-      // values: e.clientX, e.clientY, e.pageX, e.pageY
       $(this).find('.line').css({ 'transform': `translateX(${e.clientX}px)` });
       let width = $(this).width();
-      $(this).find('.new-container .img-container').css({'width': width - e.clientX + 'px'});
+      $(this).find('.new-container').css({'width': width - e.clientX + 'px'});
     });
   </script>
 </body>
