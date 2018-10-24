@@ -71,6 +71,7 @@
     const imageminPngquant = require('imagemin-pngquant');
     const imageminMozjpeg = require('imagemin-mozjpeg');
     const imageminGifsicle = require('imagemin-gifsicle');
+    const imageminWebp = require('imagemin-webp');
     const shortid = require('shortid');
     const glob = require('glob');
     window.$ = window.jQuery = require('./jquery.min.js');
@@ -138,9 +139,7 @@
       let files = [];
       for (let i = 0; i < event.dataTransfer.files.length; i++) {
         files.push(event.dataTransfer.files[i].path);
-        console.log((event.dataTransfer.files[i]));
       }
-      
       let filePaths = getFilePaths(files);
       generateImage(filePaths);
     }
@@ -165,7 +164,25 @@
       }
       return filePaths;
     }
+    
+    async function generateWebp(path) {
+      if(Array.isArray(path)) {
 
+      } else {
+        return await imagemin([path],{plugins: [
+          imageminWebp({quality: 50})
+        ]});
+      }
+    }
+    function calcSize(size) {
+      if(size >= 1024 * 1024) {
+        return (size / (1024 * 1024)).toFixed(2) + 'M';
+      } else if(size >= 1024){
+        return (size / 1024).toFixed(1) + 'KB';
+      } else {
+        return size + 'B';
+      }
+    }
     function generateImage(filePaths) {
       let html = '';
       filePaths.forEach(function (item) {
@@ -174,9 +191,33 @@
           name: filename,
           path: item
         };
-        fs.stat(item, function (err, data) {
-          file.size = data.size >= 1024 ? (data.size / 1024).toFixed(1) + 'KB' : data.size + 'B';
+        fs.readFile(item, async function (err, data) {
+          file.size = calcSize(data.length);
           let id = shortid.generate();
+          let webpFile = await generateWebp(item);
+          let originExtname = path.extname(item).slice(1);
+          let image = {
+            id: id,
+            origin: {
+              size: file.size,
+              base64:'data:image/' + originExtname + ';base64,' + data.toString('base64')
+            },
+            webp: {
+              size: calcSize(webpFile[0].data.length),
+              base64: 'data:image/webp;base64,' + webpFile[0].data.toString('base64')
+            }
+          }
+          console.log(data);
+          if(originExtname === 'png') {
+            let isAlphaBackground = false;
+            for (let index = 3; index < data.length; index += 4) {
+              if (data[index] != 255) {
+                isAlphaBackground = true;
+                break;    
+              }
+            }
+            console.log(isAlphaBackground);
+          }
           if (file) {
             html = `
             <li class="img-list-item" id="${id}">
@@ -217,9 +258,7 @@
             $('.img-list').append(html);
             $('.drag-box').hide();
           }
-
           imagemin([item], path.dirname(item), { use: [imageminMozjpeg(), imageminPngquant({ quality: '65-80' }), imageminGifsicle()] }).then((files) => {
-            console.log(files[0]);
             $('#' + id + ' .new-size').text(files[0].data.length >= 1024 ? (files[0].data.length / 1024).toFixed(1) + 'KB' : files[0].data.length + 'B');
             let ratio = ((data.size - files[0].data.length) / data.size * 100).toFixed(0) + '%';
             $('#' + id + ' .compression-ratio').text(ratio);
