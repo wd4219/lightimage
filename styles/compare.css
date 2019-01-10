@@ -1,53 +1,189 @@
-body { background: #424242; font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol; }
+body {
+  background: #424242;
+  font-family: Chinese Quote,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
 
-html, body { height: 100%; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+html, body {
+  height: 100%;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
 
-.tool-bar { height: 35px; line-height: 35px; background: #303030; position: absolute; left: 0; right: 0; z-index: 4; top: 30px; }
+.tool-bar {
+  height: 35px;
+  line-height: 35px;
+  background: #303030;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  top: 30px;
+}
 
-.tool-bar > .iconfont { font-size: 20px; color: #888e9b; padding: 0 15px; position: relative; cursor: pointer; }
+.tool-bar > .iconfont {
+  font-size: 20px;
+  color: #888e9b;
+  padding: 0 15px;
+  position: relative;
+  cursor: pointer;
+}
 
-.tool-bar .icon-list { position: absolute; right: 0; }
+.tool-bar .icon-list {
+  position: absolute;
+  right: 0;
+}
 
-.tool-bar .icon-list.active { color: #2196f3; }
+.tool-bar .icon-list.active {
+  color: #2196f3;
+}
 
-.tool-bar .background-select-box { width: 90px; padding: 0 5px; background: #fff; border-radius: 2px; font-size: 12px; text-align: center; position: absolute; display: none; z-index: 2; -webkit-transform: translate(5px, -5px); transform: translate(5px, -5px); }
+.tool-bar .background-select-box {
+  width: 90px;
+  padding: 0 5px;
+  background: #fff;
+  border-radius: 2px;
+  font-size: 12px;
+  text-align: center;
+  position: absolute;
+  display: none;
+  z-index: 2;
+  -webkit-transform: translate(5px, -5px);
+          transform: translate(5px, -5px);
+}
 
-.tool-bar .background-select-box li { height: 40px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); line-height: 40px; cursor: pointer; }
+.tool-bar .background-select-box li {
+  height: 40px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  line-height: 40px;
+  cursor: pointer;
+}
 
-.tool-bar .background-select-box li .iconfont { font-size: 12px; width: 14px; margin-right: 10px; color: #fff; }
+.tool-bar .background-select-box li .iconfont {
+  font-size: 12px;
+  width: 14px;
+  margin-right: 10px;
+  color: #fff;
+}
 
-.tool-bar .background-select-box li.active .iconfont { color: #2196f3; }
+.tool-bar .background-select-box li.active .iconfont {
+  color: #2196f3;
+}
 
-.main-container { top: 65px; right: 160px; bottom: 0; left: 0; position: absolute; }
+.main-container {
+  top: 65px;
+  right: 160px;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+}
 
-.main-container.full { right: 0; }
+.main-container.full {
+  right: 0;
+}
 
-.compare-container { height: 450px; position: absolute; top: 0; left: 0; right: 0; background: #424242; }
+.compare-container {
+  height: 450px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #424242;
+}
 
-.compare-container .line { height: 100%; width: 2px; bottom: 0; background-color: #2196f3; position: absolute; top: 0; -webkit-transform: translateX(100px); transform: translateX(100px); cursor: move; z-index: 3; }
+.compare-container .line {
+  height: 100%;
+  width: 2px;
+  bottom: 0;
+  background-color: #2196f3;
+  position: absolute;
+  top: 0;
+  -webkit-transform: translateX(100px);
+          transform: translateX(100px);
+  cursor: move;
+  z-index: 3;
+}
 
-.compare-container .line .text { font-size: 12px; color: #2196f3; top: 50%; width: 60px; position: absolute; -webkit-transform: translateY(-50%); transform: translateY(-50%); }
+.compare-container .line .text {
+  font-size: 12px;
+  color: #2196f3;
+  top: 50%;
+  width: 60px;
+  position: absolute;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
 
-.compare-container .line .text:first-child { left: -70px; text-align: right; }
+.compare-container .line .text:first-child {
+  left: -70px;
+  text-align: right;
+}
 
-.compare-container .line .text:last-child { left: 10px; }
+.compare-container .line .text:last-child {
+  left: 10px;
+}
 
-.file-list-container { position: absolute; background: #303030; width: 160px; right: 0; top: 65px; bottom: 0; }
+.file-list-container {
+  position: absolute;
+  background: #303030;
+  width: 160px;
+  right: 0;
+  top: 65px;
+  bottom: 0;
+}
 
-.file-list-container .file-list-item { padding: 10px; text-align: center; opacity: 0.7; }
+.file-list-container .file-list-item {
+  padding: 10px;
+  text-align: center;
+  opacity: 0.7;
+}
 
-.file-list-container .file-list-item img { max-width: 100px; height: 40px; }
+.file-list-container .file-list-item img {
+  max-width: 100px;
+  height: 40px;
+}
 
-.file-list-container .file-list-item:hover { background: #2196f3; opacity: 1; }
+.file-list-container .file-list-item:hover {
+  background: #2196f3;
+  opacity: 1;
+}
 
-.info-container { color: #fff; position: absolute; top: 450px; right: 0; bottom: 0; left: 0; background: #303030; padding: 20px; }
+.info-container {
+  color: #fff;
+  position: absolute;
+  top: 450px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #303030;
+  padding: 20px;
+}
 
-.info-container .info-item { height: 40px; line-height: 40px; display: -webkit-box; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; }
+.info-container .info-item {
+  height: 40px;
+  line-height: 40px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
 
-.info-container .info-item:nth-child(2) .progress { width: 300px; }
+.info-container .info-item .label {
+  width: 90px;
+}
 
-.info-container .info-item .label { width: 90px; }
+.info-container .info-item .progress {
+  width: 400px;
+  height: 8px;
+  background: #2196f3;
+  margin-right: 15px;
+}
 
-.info-container .info-item .progress { width: 400px; height: 8px; background: #2196f3; margin-right: 15px; }
-
-.info-container .info-item .size .iconfont { margin-left: 15px; cursor: pointer; color: #2196f3; }
+.info-container .info-item .size .iconfont {
+  margin-left: 15px;
+  cursor: pointer;
+  color: #2196f3;
+}

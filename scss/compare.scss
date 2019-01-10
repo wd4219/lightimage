@@ -141,11 +141,6 @@ html,body{
     line-height: 40px;
     display: flex;
     align-items: center;
-    &:nth-child(2){
-      .progress{
-        width: 300px;
-      }
-    }
     .label{
       width: 90px;
     }

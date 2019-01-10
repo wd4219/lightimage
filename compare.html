@@ -33,37 +33,31 @@
   <div class="main-container">
     <div class="compare-container">
       <div class="origin-container" style="height:100%;width:100%;position:relative;overflow: hidden;">
-        <img src="./images/1.jpg" alt="" style="height: 100%;position: absolute;">
+        <img src="./images/1.jpg" alt="" style="position: absolute;">
       </div>
       <div class="line">
         <div class="text">原图</div>
         <div class="text">压缩后</div>
       </div>
       <div class="new-container" style="height:100%; width: 100%; position: absolute;overflow: hidden;right:0;top:0;z-index:2;">
-        <img src="./images/2.jpg" alt="" style="height: 100%;position: absolute;">
+        <img src="./images/2.jpg" alt="" style="position: absolute;">
       </div>
     </div>
     <div class="info-container">
-      <div class="info-item">
+      <div class="info-item origin-item">
         <div class="label">原图</div>
         <div class="progress"></div>
-        <div class="size">10.0KB <i class="iconfont icon-compare" title="对比"></i><i class="iconfont icon-download"
-            title="下载"></i></div>
+        <div class="size"><span class="num"></span><i class="iconfont icon-compare" title="对比"></i><i class="iconfont icon-download" title="下载"></i></div>
       </div>
-      <div class="info-item">
+      <div class="info-item compress-item">
         <div class="label">压缩后</div>
         <div class="progress"></div>
-        <div class="size">10.0KB</div>
+        <div class="size"><span class="num"></span><i class="iconfont icon-compare" title="对比"></i><i class="iconfont icon-download" title="下载"></i></div>
       </div>
-      <div class="info-item">
-        <div class="label">转为jpg</div>
-        <div class="progress"></div>
-        <div class="size">10.0KB</div>
-      </div>
-      <div class="info-item">
+      <div class="info-item webp-item">
         <div class="label">转为webp</div>
         <div class="progress"></div>
-        <div class="size">10.0KB</div>
+        <div class="size"><span class="num"></span><i class="iconfont icon-compare" title="对比"></i><i class="iconfont icon-download" title="下载"></i></div>
       </div>
     </div>
   </div>
@@ -80,6 +74,11 @@
     const path = require('path');
     const shortid = require('shortid');
     const glob = require('glob');
+    let scale = 1;
+    let startX  = 0;
+    let startY = 0;
+    let _top = 0;
+    let _right = 0;
     window.$ = window.jQuery = require('./jquery.min.js');
     $('.right-tool .iconfont').click(function () {
       let index = $(this).index();
@@ -98,6 +97,8 @@
         window.close();
       }
     });
+    let data = ipcRenderer.sendSync('load-compare');
+    generateCompare(data);
     $('.title-bar').dblclick(function () {
       let window = remote.BrowserWindow.getFocusedWindow();
       if (!window.isMaximized()) {
@@ -130,17 +131,74 @@
       changeImagePosition();
     });
     function changeImagePosition() {
-      let imgWidth = $('.origin-container').find('img').width();
+      let imgWidth = document.querySelector('.origin-container img').offsetWidth;
+      let imgHeight = document.querySelector('.origin-container img').offsetHeight;
       let width = $('.origin-container').width();
-      $('.origin-container img').css({'right': (width-imgWidth)/2 + 'px',width: imgWidth + 'px'});
-      $('.new-container img').css({'right': (width-imgWidth)/2 + 'px',width: imgWidth + 'px'});
+      let height = $('.origin-container').height();
+      _right = (width - imgWidth)/2;
+      _top = (height - imgHeight) / 2;
+      $('.origin-container img').css({'right': (width - imgWidth)/2 + 'px', 'top': (height - imgHeight) / 2 + 'px'});
+      $('.new-container img').css({'right': (width - imgWidth)/2 + 'px','top': (height - imgHeight) / 2 + 'px'});
     }
-    changeImagePosition();
-    $('.compare-container').mousemove(function (e) {
-      $(this).find('.line').css({ 'transform': `translateX(${e.clientX}px)` });
-      let width = $(this).width();
-      $(this).find('.new-container').css({'width': width - e.clientX + 'px'});
+    let timer = setInterval(function(){
+      if(document.querySelector('.origin-container img').offsetWidth > 0) {
+        clearInterval(timer);
+        changeImagePosition();
+      }
+    },100);
+    $('.compare-container .line').mousedown(function (e) {
+      e.preventDefault();
+      $('.compare-container').on('mousemove',function (e) {
+        e.preventDefault();
+        $(this).find('.line').css({ 'transform': `translateX(${e.clientX}px)` });
+        let width = $(this).width();
+        $(this).find('.new-container').css({'width': width - e.clientX + 'px'});
+      });
     });
+    $('.compare-container .line').mouseup(function(){
+      $('.compare-container').off('mousemove');
+    });
+    $('.compare-container img').mousedown(function(e){
+      e.preventDefault();
+      startX = e.clientX;
+      startY = e.clientY;
+      $('.compare-container').on('mousemove',function (e) {
+        e.preventDefault();
+        _right = _right - (e.clientX - startX);
+        _top = _top + (e.clientY - startY);
+        $('.origin-container img').css({'right': _right + 'px', 'top': _top + 'px'});
+        $('.new-container img').css({'right': _right + 'px','top': _top + 'px'});
+        startX = e.clientX;
+        startY = e.clientY;
+      });
+    });
+    $('.compare-container img').mouseup(function() {
+      $('.compare-container').off('mousemove');
+    });
+    $('.compare-container').on('mousewheel',function(e){
+      e.preventDefault();
+      var wheel = e.originalEvent.wheelDelta || -e.originalEvent.detail;
+      var delta = Math.max(-1, Math.min(1, wheel) );
+      if(delta < 0){
+        if(scale > 0.2) {
+          scale -= 0.1;
+        }
+      }else{
+        scale += 0.1;
+      }
+      $('.origin-container img').css({'transform': `scale(${scale})`});
+      $('.new-container img').css({'transform': `scale(${scale})`});
+    });
+
+    function generateCompare(data) {
+      $('.origin-container img').attr('src', data.origin.base64);
+      $('.new-container img').attr('src', data.compress.base64);
+      $('.origin-item .num').text(data.origin.size);
+      $('.compress-item .num').text(data.compress.size);
+      $('.compress-item .progress').css({width: (400 * (data.compress.length / data.origin.length)) + 'px'});
+      $('.webp-item .num').text(data.webp.size);
+      $('.webp-item .progress').css({width: (400 * (data.webp.length / data.origin.length)) + 'px'});
+    }
   </script>
 </body>
 

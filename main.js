@@ -1,20 +1,17 @@
-const { app, BrowserWindow, Menu, dialog } = require('electron')
-const ipcMain = require('electron').ipcMain;
-const fs = require('fs');
-const path = require('path');
-ipcMain.on('base64', function (event, data) {
-  dialog.showMessageBox(win, { type: 'info', buttons: ['确定', '复制'], defaultId: 0, title: 'base64字符串', message: '这是一条消息黄金卡刷机大师', detail: ['这是一条消息黄金卡刷机大师第三大厦大叔，', '没的撒大会看到撒大客户的撒大叔看到啊打双打滑动'], noLink: true });
-});
-
+const { app, BrowserWindow, Menu, ipcRenderer, ipcMain } = require('electron');
+let _data = null;
 ipcMain.on('compare',function(event,data) {
+  _data = data;
   let compare = new BrowserWindow({frame: false, backgroundColor:'#424242',title: '对比',width: 960,height:720});
   compare.loadFile('./compare.html');
   compare.webContents.openDevTools();
   compare.once('ready-to-show',function(){
     compare.show();
   });
-})
-
+});
+ipcMain.on('load-compare',function(event,data) {
+  event.returnValue = _data;
+});
 let win;
 
 function createWindow() {

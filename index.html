@@ -19,7 +19,7 @@
   </div>
   <div class="img-list-container">
     <ul class="img-list" ondrop="drop(event)" ondragover="allowDrop(event)">
-      <li class="img-list-item">
+      <!-- <li class="img-list-item">
         <i class="iconfont icon-success"></i>
         <div class="thumb">
           <img src="./images/red_like.png" alt="缩略图">
@@ -54,7 +54,7 @@
             <i class="iconfont icon-location"></i>
           </div>
         </div>
-      </li>
+      </li> -->
       <div class="drag-box">
         <p>请将图片拖入窗口中<br>（支持JPG PNG GIF格式）</p>
         <i class="iconfont icon-image"></i>
@@ -74,6 +74,7 @@
     const imageminWebp = require('imagemin-webp');
     const shortid = require('shortid');
     const glob = require('glob');
+    const IMG_ARRAY = [];
     window.$ = window.jQuery = require('./jquery.min.js');
     const URL = window.URL;
     ipcRenderer.on('filepaths', function (event, files) {
@@ -129,7 +130,14 @@
     });
 
     $('.img-list').on('click', '.compare', function (e) {
-      let data = {};
+      let id = $(e.target).parents('.img-list-item').attr('id');
+      let data = null;
+      for(let i = 0; i < IMG_ARRAY.length;i++) {
+        if(IMG_ARRAY[i].id === id) {
+          data = IMG_ARRAY[i];
+          break;
+        }
+      }
       ipcRenderer.send('compare', data);
     });
     function allowDrop(event) {
@@ -200,23 +208,14 @@
             id: id,
             origin: {
               size: file.size,
+              length: data.length,
               base64:'data:image/' + originExtname + ';base64,' + data.toString('base64')
             },
             webp: {
               size: calcSize(webpFile[0].data.length),
+              length: webpFile[0].data.length,
               base64: 'data:image/webp;base64,' + webpFile[0].data.toString('base64')
             }
-          }
-          console.log(data);
-          if(originExtname === 'png') {
-            let isAlphaBackground = false;
-            for (let index = 3; index < data.length; index += 4) {
-              if (data[index] != 255) {
-                isAlphaBackground = true;
-                break;    
-              }
-            }
-            console.log(isAlphaBackground);
           }
           if (file) {
             html = `
@@ -258,15 +257,21 @@
             $('.img-list').append(html);
             $('.drag-box').hide();
           }
-          imagemin([item], path.dirname(item), { use: [imageminMozjpeg(), imageminPngquant({ quality: '65-80' }), imageminGifsicle()] }).then((files) => {
+          imagemin([item], path.dirname(item), { use: [imageminMozjpeg({quality: '75'}), imageminPngquant({ quality: '65-80' }), imageminGifsicle()] }).then((files) => {
             $('#' + id + ' .new-size').text(files[0].data.length >= 1024 ? (files[0].data.length / 1024).toFixed(1) + 'KB' : files[0].data.length + 'B');
-            let ratio = ((data.size - files[0].data.length) / data.size * 100).toFixed(0) + '%';
+            let ratio = ((data.length - files[0].data.length) / data.length * 100).toFixed(0) + '%';
             $('#' + id + ' .compression-ratio').text(ratio);
             $('#' + id + ' .base64').data('path', item);
             $('#' + id + ' .location').data('path', item);
             $('#' + id + '> .iconfont').addClass('icon-success');
             $('#' + id + ' .compression-ratio').html(`<i class="iconfont icon-reduce"></i>${ratio}`);
+            image.compress = {
+              size: calcSize(files[0].data.length),
+              length: files[0].length,
+              base64: 'data:image/' + originExtname + ';base64,' + files[0].data.toString('base64')
+            }
           });
+          IMG_ARRAY.push(image);
         });
       });
     }
