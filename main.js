@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcRenderer, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 let _data = null;
 ipcMain.on('compare',function(event,data) {
   _data = data;
@@ -12,13 +12,13 @@ ipcMain.on('compare',function(event,data) {
 ipcMain.on('load-compare',function(event,data) {
   event.returnValue = _data;
 });
+
 let win;
 
 function createWindow() {
   win = new BrowserWindow({ width: 450, height: 700, fullscreenable: false, resizable: false ,frame: false,backgroundColor:'#424242'});
   //创建菜单
   win.webContents.openDevTools();
-  // const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(null);
 
   app.on('ready', function ready() {

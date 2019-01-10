@@ -47,7 +47,7 @@
       <div class="info-item origin-item">
         <div class="label">原图</div>
         <div class="progress"></div>
-        <div class="size"><span class="num"></span><i class="iconfont icon-compare" title="对比"></i><i class="iconfont icon-download" title="下载"></i></div>
+        <div class="size"><span class="num"></span><i class="iconfont icon-download" title="下载"></i></div>
       </div>
       <div class="info-item compress-item">
         <div class="label">压缩后</div>
@@ -74,130 +74,156 @@
     const path = require('path');
     const shortid = require('shortid');
     const glob = require('glob');
-    let scale = 1;
-    let startX  = 0;
-    let startY = 0;
-    let _top = 0;
-    let _right = 0;
+    let scale = 1; //预览缩放比例
+    let startX  = 0; //图片拖动的起始点 x轴坐标
+    let startY = 0; // 图片拖动的起始点 y轴坐标
+    let _top = 0; // 图片在预览框中的top值
+    let _right = 0; // 图片在预览框中的 right值
     window.$ = window.jQuery = require('./jquery.min.js');
-    $('.right-tool .iconfont').click(function () {
-      let index = $(this).index();
-      let window = remote.BrowserWindow.getFocusedWindow();
-      if (index === 1) {
-        if (!window.isMaximized()) {
-          $(this).removeClass('icon-max').addClass('icon-reset');
-          window.maximize();
-        } else {
-          $(this).removeClass('icon-reset').addClass('icon-max');
-          window.unmaximize();
-        }
-      } else if (index === 0) {
-        window.minimize();
-      } else {
-        window.close();
-      }
-    });
-    let data = ipcRenderer.sendSync('load-compare');
+    const URL = window.URL;
+    let data = ipcRenderer.sendSync('load-compare'); //获取预览图片的信息
+    clickFunc();
+    function generateBlob(data,mine) {
+      return new Blob([data],{type: mine});
+    };
     generateCompare(data);
-    $('.title-bar').dblclick(function () {
-      let window = remote.BrowserWindow.getFocusedWindow();
-      if (!window.isMaximized()) {
-        $(this).find('.iconfont').eq(1).removeClass('icon-max').addClass('icon-reset');
-        window.maximize();
-      } else {
-        $(this).find('.iconfont').eq(1).removeClass('icon-reset').addClass('icon-max');
-        window.unmaximize();
-      }
-    });
-    $('.icon-background').on('click', function () {
-      $(this).find('.background-select-box').slideToggle();
-    });
-    $('.icon-background').on('click', 'li', function (e) {
-      let index = $(this).index();
-      if (index === 0) {
-        $('.compare-container').css({ background: '#424242' });
-      } else if (index === 2) {
-        $('.compare-container').css({ background: `url('./images/background.png') repeat` });
-      } else {
-        $('.compare-container').css({ background: '#fff' });
-      }
-      $(this).addClass('active').siblings().removeClass('active');
-      e.stopPropagation();
-    });
-    $('.icon-list').on('click', function () {
-      $(this).toggleClass('active');
-      $('.main-container').toggleClass('full');
-      $('.file-list-container').toggle();
-      changeImagePosition();
-    });
-    function changeImagePosition() {
-      let imgWidth = document.querySelector('.origin-container img').offsetWidth;
-      let imgHeight = document.querySelector('.origin-container img').offsetHeight;
-      let width = $('.origin-container').width();
-      let height = $('.origin-container').height();
-      _right = (width - imgWidth)/2;
-      _top = (height - imgHeight) / 2;
-      $('.origin-container img').css({'right': (width - imgWidth)/2 + 'px', 'top': (height - imgHeight) / 2 + 'px'});
-      $('.new-container img').css({'right': (width - imgWidth)/2 + 'px','top': (height - imgHeight) / 2 + 'px'});
-    }
     let timer = setInterval(function(){
       if(document.querySelector('.origin-container img').offsetWidth > 0) {
         clearInterval(timer);
         changeImagePosition();
       }
-    },100);
-    $('.compare-container .line').mousedown(function (e) {
-      e.preventDefault();
-      $('.compare-container').on('mousemove',function (e) {
-        e.preventDefault();
-        $(this).find('.line').css({ 'transform': `translateX(${e.clientX}px)` });
-        let width = $(this).width();
-        $(this).find('.new-container').css({'width': width - e.clientX + 'px'});
-      });
-    });
-    $('.compare-container .line').mouseup(function(){
-      $('.compare-container').off('mousemove');
-    });
-    $('.compare-container img').mousedown(function(e){
-      e.preventDefault();
-      startX = e.clientX;
-      startY = e.clientY;
-      $('.compare-container').on('mousemove',function (e) {
-        e.preventDefault();
-        _right = _right - (e.clientX - startX);
-        _top = _top + (e.clientY - startY);
-        $('.origin-container img').css({'right': _right + 'px', 'top': _top + 'px'});
-        $('.new-container img').css({'right': _right + 'px','top': _top + 'px'});
-        startX = e.clientX;
-        startY = e.clientY;
-      });
-    });
-    $('.compare-container img').mouseup(function() {
-      $('.compare-container').off('mousemove');
-    });
-    $('.compare-container').on('mousewheel',function(e){
-      e.preventDefault();
-      var wheel = e.originalEvent.wheelDelta || -e.originalEvent.detail;
-      var delta = Math.max(-1, Math.min(1, wheel) );
-      if(delta < 0){
-        if(scale > 0.2) {
-          scale -= 0.1;
-        }
-      }else{
-        scale += 0.1;
-      }
-      $('.origin-container img').css({'transform': `scale(${scale})`});
-      $('.new-container img').css({'transform': `scale(${scale})`});
-    });
+    },100); //检测图片是否已经渲染
+    
+    // 修改比较时图片的位置
+    function changeImagePosition() {
+      let imgWidth = document.querySelector('.origin-container img').offsetWidth;
+      let imgHeight = document.querySelector('.origin-container img').offsetHeight;
+      let width = $('.origin-container').width();
+      let height = $('.origin-container').height();
+      _right = (width - imgWidth) / 2;
+      _top = (height - imgHeight) / 2;
+      $('.origin-container img').css({'right': _right + 'px', 'top': _top + 'px'});
+      $('.new-container img').css({'right': _right + 'px','top': _top + 'px'});
+    }
 
     function generateCompare(data) {
-      $('.origin-container img').attr('src', data.origin.base64);
-      $('.new-container img').attr('src', data.compress.base64);
+      $('.origin-container img').attr('src', data.origin.blobUrl);
+      $('.new-container img').attr('src', data.compress.blobUrl);
       $('.origin-item .num').text(data.origin.size);
       $('.compress-item .num').text(data.compress.size);
       $('.compress-item .progress').css({width: (400 * (data.compress.length / data.origin.length)) + 'px'});
       $('.webp-item .num').text(data.webp.size);
       $('.webp-item .progress').css({width: (400 * (data.webp.length / data.origin.length)) + 'px'});
+    }
+
+    function clickFunc() {
+      $('.compare-container .line').mousedown(function (e) {
+        e.preventDefault();
+        $('.compare-container').on('mousemove',function (e) {
+          e.preventDefault();
+          $(this).find('.line').css({ 'transform': `translateX(${e.clientX}px)` });
+          let width = $(this).width();
+          $(this).find('.new-container').css({'width': width - e.clientX + 'px'});
+        });
+      });
+      $('.compare-container .line').mouseup(function(){
+        $('.compare-container').off('mousemove');
+      });
+      $('.compare-container img').mousedown(function(e){
+        e.preventDefault();
+        startX = e.clientX;
+        startY = e.clientY;
+        $('.compare-container').on('mousemove',function (e) {
+          e.preventDefault();
+          _right = _right - (e.clientX - startX);
+          _top = _top + (e.clientY - startY);
+          $('.origin-container img').css({'right': _right + 'px', 'top': _top + 'px'});
+          $('.new-container img').css({'right': _right + 'px','top': _top + 'px'});
+          startX = e.clientX;
+          startY = e.clientY;
+        });
+      });
+      $('.compare-container img').mouseup(function() {
+        $('.compare-container').off('mousemove');
+      });
+      $('.compare-container').on('mousewheel',function(e){
+        e.preventDefault();
+        var wheel = e.originalEvent.wheelDelta || -e.originalEvent.detail;
+        var delta = Math.max(-1, Math.min(1, wheel) );
+        if(delta < 0){
+          if(scale > 0.2) {
+            scale -= 0.1;
+          }
+        }else{
+          scale += 0.1;
+        }
+        $('.origin-container img').css({'transform': `scale(${scale})`});
+        $('.new-container img').css({'transform': `scale(${scale})`});
+      });
+
+      $('.title-bar').dblclick(function () {
+        let window = remote.BrowserWindow.getFocusedWindow();
+        if (!window.isMaximized()) {
+          $(this).find('.iconfont').eq(1).removeClass('icon-max').addClass('icon-reset');
+          window.maximize();
+        } else {
+          $(this).find('.iconfont').eq(1).removeClass('icon-reset').addClass('icon-max');
+          window.unmaximize();
+        }
+      });
+      $('.icon-background').on('click', function () {
+        $(this).find('.background-select-box').slideToggle();
+      });
+      $('.icon-background').on('click', 'li', function (e) {
+        let index = $(this).index();
+        if (index === 0) {
+          $('.compare-container').css({ background: '#424242' });
+        } else if (index === 2) {
+          $('.compare-container').css({ background: `url('./images/background.png') repeat` });
+        } else {
+          $('.compare-container').css({ background: '#fff' });
+        }
+        $(this).addClass('active').siblings().removeClass('active');
+        e.stopPropagation();
+      });
+      $('.icon-list').on('click', function () {
+        $(this).toggleClass('active');
+        $('.main-container').toggleClass('full');
+        $('.file-list-container').toggle();
+        changeImagePosition();
+      });
+
+      $('.right-tool .iconfont').click(function () {
+        let index = $(this).index();
+        let window = remote.BrowserWindow.getFocusedWindow();
+        if (index === 1) {
+          if (!window.isMaximized()) {
+            $(this).removeClass('icon-max').addClass('icon-reset');
+            window.maximize();
+          } else {
+            $(this).removeClass('icon-reset').addClass('icon-max');
+            window.unmaximize();
+          }
+        } else if (index === 0) {
+          window.minimize();
+        } else {
+          window.close();
+        }
+      });
+
+      $('.compress-item .icon-compare').on('click',function(){
+        $('.new-container img').attr('src', data.origin.blobUrl);
+      });
+      $('.webp-item .icon-compare').on('click',function(){
+        $('.new-container img').attr('src', data.webp.blobUrl);
+      });
+
+      $('.webp-item .icon-download').on('click',function() {
+        var anchor = document.createElement('a')
+        anchor.href = data.webp.blobUrl;
+        anchor.download = data.name;
+        anchor.click();
+      });
     }
   </script>
 </body>

@@ -68,6 +68,7 @@ html,body{
   bottom: 0;
   left: 0;
   position: absolute;
+  overflow: hidden;
   &.full{
     right: 0;
   }
@@ -86,7 +87,7 @@ html,body{
     background-color: #2196f3;
     position: absolute;
     top: 0;
-    transform: translateX(100px);
+    transform: translateX(220px);
     cursor: move;
     z-index: 3;
     .text{

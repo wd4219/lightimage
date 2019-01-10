@@ -191,10 +191,16 @@
         return size + 'B';
       }
     }
+
+    function generateBlob(data,mine) {
+      return new Blob([data],{type: mine});
+    };
+    
     function generateImage(filePaths) {
       let html = '';
       filePaths.forEach(function (item) {
         let filename = path.basename(item);
+        let originExtname = path.extname(item).slice(1);
         let file = {
           name: filename,
           path: item
@@ -203,18 +209,20 @@
           file.size = calcSize(data.length);
           let id = shortid.generate();
           let webpFile = await generateWebp(item);
-          let originExtname = path.extname(item).slice(1);
+          let webpBlob = generateBlob(webpFile[0].data,'webp/image');
+          let originBlob = generateBlob(data,originExtname + '/image');
           let image = {
             id: id,
+            name: file.name,
             origin: {
               size: file.size,
               length: data.length,
-              base64:'data:image/' + originExtname + ';base64,' + data.toString('base64')
+              blobUrl: URL.createObjectURL(originBlob)
             },
             webp: {
               size: calcSize(webpFile[0].data.length),
               length: webpFile[0].data.length,
-              base64: 'data:image/webp;base64,' + webpFile[0].data.toString('base64')
+              blobUrl: URL.createObjectURL(webpBlob)
             }
           }
           if (file) {
@@ -268,7 +276,7 @@
             image.compress = {
               size: calcSize(files[0].data.length),
               length: files[0].length,
-              base64: 'data:image/' + originExtname + ';base64,' + files[0].data.toString('base64')
+              blobUrl: URL.createObjectURL(generateBlob(files[0].data, originExtname + '/image'))
             }
           });
           IMG_ARRAY.push(image);
