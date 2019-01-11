@@ -219,10 +219,25 @@
       });
 
       $('.webp-item .icon-download').on('click',function() {
-        var anchor = document.createElement('a')
-        anchor.href = data.webp.blobUrl;
-        anchor.download = data.name;
-        anchor.click();
+        let download = {
+          id: data.id,
+          type: 'webp',
+        };
+        ipcRenderer.send('download-single-file',download);
+      });
+      $('.origin-item .icon-download').on('click',function() {
+        let download = {
+          id: data.id,
+          type: 'origin',
+        };
+        ipcRenderer.send('download-single-file',download);
+      });
+      $('.compress-item .icon-download').on('click',function() {
+        let download = {
+          id: data.id,
+          type: 'compress',
+        };
+        ipcRenderer.send('download-single-file',download);
       });
     }
   </script>
