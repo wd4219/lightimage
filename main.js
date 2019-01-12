@@ -7,7 +7,7 @@ let _data = null;
 let IMG_ARRAY = [];
 ipcMain.on('compare',function(event,data) {
   _data = data;
-  let compare = new BrowserWindow({frame: false, backgroundColor:'#424242',title: '对比',width: 960,height:720});
+  let compare = new BrowserWindow({frame: false, backgroundColor:'#424242',title: '对比',width: 960,height:720,resizable: false});
   compare.loadFile('./compare.html');
   compare.webContents.openDevTools();
   compare.once('ready-to-show',function(){
@@ -55,7 +55,7 @@ let win;
 function createWindow() {
   win = new BrowserWindow({ width: 450, height: 700, fullscreenable: false, resizable: false ,frame: false,backgroundColor:'#424242'});
   //创建菜单
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
   Menu.setApplicationMenu(null);
 
   app.on('ready', function ready() {

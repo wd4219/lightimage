@@ -145,7 +145,7 @@ html, body {
   height: 40px;
 }
 
-.file-list-container .file-list-item:hover {
+.file-list-container .file-list-item:hover, .file-list-container .file-list-item.active {
   background: #2196f3;
   opacity: 1;
 }

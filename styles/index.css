@@ -11,6 +11,32 @@ html, body {
           user-select: none;
 }
 
+.setting-container {
+  background: #fff;
+  border-radius: 4px;
+  position: fixed;
+  width: 360px;
+  top: 50%;
+  left: 50%;
+  padding: 20px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.setting-container label, .setting-container input {
+  display: block;
+  width: 100%;
+  outline: none;
+}
+
+.setting-container label {
+  color: #888e9b;
+  margin: 15px 0;
+}
+
 .title-bar {
   height: 30px;
   color: #888e9b;
@@ -75,6 +101,42 @@ html, body {
 .img-list-container::-webkit-scrollbar-thumb {
   border-radius: 4px;
   background-color: #363738;
+}
+
+.img-list-container .top-bar {
+  position: absolute;
+  top: 0;
+  height: 30px;
+  line-height: 30px;
+  background: rgba(54, 55, 56, 0.6);
+  color: #fff;
+  font-size: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  left: 0;
+  right: 0;
+}
+
+.img-list-container .top-bar-item {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 30px;
+          flex: 0 0 30px;
+  width: 30px;
+  text-align: center;
+  color: #fff;
+}
+
+.img-list-container .top-bar-item:last-child {
+  position: absolute;
+  right: 0;
+  top: 0;
+  opacity: 1;
+}
+
+.img-list-container .top-bar-item:hover {
+  cursor: pointer;
+  background: #363738;
 }
 
 .img-list-container .img-list {

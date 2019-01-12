@@ -33,14 +33,14 @@
   <div class="main-container">
     <div class="compare-container">
       <div class="origin-container" style="height:100%;width:100%;position:relative;overflow: hidden;">
-        <img src="./images/1.jpg" alt="" style="position: absolute;">
+        <img src="" alt="" style="position: absolute;">
       </div>
       <div class="line">
         <div class="text">原图</div>
         <div class="text">压缩后</div>
       </div>
       <div class="new-container" style="height:100%; width: 100%; position: absolute;overflow: hidden;right:0;top:0;z-index:2;">
-        <img src="./images/2.jpg" alt="" style="position: absolute;">
+        <img src="" alt="" style="position: absolute;">
       </div>
     </div>
     <div class="info-container">
@@ -81,11 +81,16 @@
     let _right = 0; // 图片在预览框中的 right值
     window.$ = window.jQuery = require('./jquery.min.js');
     const URL = window.URL;
-    let data = ipcRenderer.sendSync('load-compare'); //获取预览图片的信息
+    let compare = ipcRenderer.sendSync('load-compare'); //获取预览图片的信息
+    let data = null;
+    for(let i = 0; i < compare.list.length; i++) {
+      if(compare.id === compare.list[i].id) {
+        data = compare.list[i];
+        break;
+      }
+    }
     clickFunc();
-    function generateBlob(data,mine) {
-      return new Blob([data],{type: mine});
-    };
+    generateCompareList(compare.list);
     generateCompare(data);
     let timer = setInterval(function(){
       if(document.querySelector('.origin-container img').offsetWidth > 0) {
@@ -94,6 +99,11 @@
       }
     },100); //检测图片是否已经渲染
     
+    // 生成blob对象
+    function generateBlob(data,mine) {
+      return new Blob([data],{type: mine});
+    };
+
     // 修改比较时图片的位置
     function changeImagePosition() {
       let imgWidth = document.querySelector('.origin-container img').offsetWidth;
@@ -114,6 +124,26 @@
       $('.compress-item .progress').css({width: (400 * (data.compress.length / data.origin.length)) + 'px'});
       $('.webp-item .num').text(data.webp.size);
       $('.webp-item .progress').css({width: (400 * (data.webp.length / data.origin.length)) + 'px'});
+    }
+
+    function generateCompareList(list) {
+      let html = '';
+      list.forEach((item) => {
+        if(item.id === compare.id) {
+          html += `
+            <li class="file-list-item active">
+              <img src="${item.origin.blobUrl}" alt="">
+            </li>
+          `;
+        } else {
+          html += `
+            <li class="file-list-item">
+              <img src="${item.origin.blobUrl}" alt="">
+            </li>
+          `;
+        }
+      });
+      $('.file-list').html(html);
     }
 
     function clickFunc() {
