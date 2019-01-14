@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="./styles/normalize.css">
   <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_cnuehv9rdm4.css">
   <link rel="stylesheet" href="https://qidian.gtimg.com/c/=/lulu/theme/peak/css/common/ui/Tips.css,/lulu/theme/peak/css/common/ui/Range.css">
+  <link rel="stylesheet" href="https://qidian.gtimg.com/lulu/theme/peak/css/common/ui/Checkbox.css">
+  <link rel="stylesheet" href="https://qidian.gtimg.com/lulu/theme/peak/css/common/ui/Switch.css">
 </head>
 
 <body>
@@ -78,6 +80,7 @@
   </div>
 
   <div class="setting-container">
+    <h3 class="title">配置参数</h3>
     <label>Mozjpeg质量</label>
     <input type="range" id="mozjpeg" min="1" max="100">
     <label>Pngquant质量</label>
@@ -86,6 +89,8 @@
     <input type="range" id="gifsicle" min="1" max="100">
     <label>webp质量</label>
     <input type="range" id="webp" min="1" max="100">
+    <label>是否覆盖源文件</label>
+    <input type="checkbox" id="switch"><label class="ui-switch" for="switch"></label>
   </div>
 
   <script>

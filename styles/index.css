@@ -28,7 +28,6 @@ html, body {
 
 .setting-container label, .setting-container input {
   display: block;
-  width: 100%;
   outline: none;
 }
 
