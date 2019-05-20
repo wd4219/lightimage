@@ -53,7 +53,9 @@ ipcMain.on('download-single-file',function(event,data){
 let win;
 
 function createWindow() {
-  win = new BrowserWindow({ width: 450, height: 700, fullscreenable: false, resizable: false ,frame: false,backgroundColor:'#424242'});
+  win = new BrowserWindow({ width: 450, height: 700, fullscreenable: false, resizable: false ,frame: false,backgroundColor:'#424242',webPreferences: {
+    nodeIntegration: true
+  }});
   //创建菜单
   win.webContents.openDevTools();
   Menu.setApplicationMenu(null);

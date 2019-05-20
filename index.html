@@ -7,16 +7,12 @@
   <link rel="stylesheet" href="./styles/index.css">
   <link rel="stylesheet" href="./styles/normalize.css">
   <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_cnuehv9rdm4.css">
-  <link rel="stylesheet" href="https://qidian.gtimg.com/c/=/lulu/theme/peak/css/common/ui/Tips.css,/lulu/theme/peak/css/common/ui/Range.css">
-  <link rel="stylesheet" href="https://qidian.gtimg.com/lulu/theme/peak/css/common/ui/Checkbox.css">
-  <link rel="stylesheet" href="https://qidian.gtimg.com/lulu/theme/peak/css/common/ui/Switch.css">
 </head>
 
 <body>
   <div class="title-bar">lightimage
     <div class="right-tool">
       <span class="iconfont icon-min"></span>
-      <span class="iconfont icon-max"></span>
       <span class="iconfont icon-close"></span>
     </div>
   </div>
@@ -78,32 +74,13 @@
       </div>
     </ul>
   </div>
-
-  <div class="setting-container">
-    <h3 class="title">配置参数</h3>
-    <label>Mozjpeg质量</label>
-    <input type="range" id="mozjpeg" min="1" max="100">
-    <label>Pngquant质量</label>
-    <input type="range" id="pngquant" min="1" max="100">
-    <label>Gifsicle质量</label>
-    <input type="range" id="gifsicle" min="1" max="100">
-    <label>webp质量</label>
-    <input type="range" id="webp" min="1" max="100">
-    <label>是否覆盖源文件</label>
-    <input type="checkbox" id="switch"><label class="ui-switch" for="switch"></label>
-  </div>
-
   <script>
     const { remote, ipcRenderer, shell, clipboard } = require('electron');
     const fs = require('fs');
     const path = require('path');
     const base64Img = require('base64-img');
-    const imagemin = require('imagemin');
-    const imageminPngquant = require('imagemin-pngquant');
-    const imageminMozjpeg = require('imagemin-mozjpeg');
-    const imageminGifsicle = require('imagemin-gifsicle');
-    const imageminWebp = require('imagemin-webp');
     const shortid = require('shortid');
+    const util = require('./util.js');
     const glob = require('glob');
     const IMG_ARRAY = [];
     window.$ = window.jQuery = require('./jquery.min.js');
@@ -119,30 +96,12 @@
     $('.right-tool .iconfont').click(function (e) {
       let index = $(this).index();
       let window = remote.BrowserWindow.getFocusedWindow();
-      if (index === 1) {
-        if ($(this).hasClass('icon-max')) {
-          $(this).removeClass('icon-max').addClass('icon-reset');
-          window.maximize();
-        } else {
-          $(this).removeClass('icon-reset').addClass('icon-max');
-          window.unmaximize();
-        }
-      } else if (index === 0) {
+      if (index === 0) {
         window.minimize();
       } else {
         window.close();
       }
       e.stopPropagation();
-    });
-    $('.title-bar').dblclick(function () {
-      let window = remote.BrowserWindow.getFocusedWindow();
-      if ($(this).find('.iconfont').eq(1).hasClass('icon-max')) {
-        $(this).find('.iconfont').eq(1).removeClass('icon-max').addClass('icon-reset');
-        window.maximize();
-      } else {
-        $(this).find('.iconfont').eq(1).removeClass('icon-reset').addClass('icon-max');
-        window.unmaximize();
-      }
     });
     $('.img-list').on('click', '.base64', function (e) {
       let path = $(this).data('path');
@@ -227,9 +186,7 @@
     }
     
     async function generateWebp(path) {
-      return await imagemin([path],{plugins: [
-        imageminWebp({quality: 50})
-      ]});
+      return await util.generatePng(2,path);
     }
     function calcSize(size) {
       if(size >= 1024 * 1024) {
@@ -253,6 +210,7 @@
         fs.readFile(item, async function (err, data) {
           let id = shortid.generate();
           let webpFile = await generateWebp(item);
+          console.log(webpFile);
           let webpBlob = generateBlob(webpFile[0].data,'webp/image');
           let originBlob = generateBlob(data,originExtname + '/image');
           let image = {
@@ -274,21 +232,6 @@
             }
           }
           generateImageListItem(image, path.extname(item));
-          imagemin([item], path.dirname(item), { use: [imageminMozjpeg({quality: '75'}), imageminPngquant({ quality: '65-80' }), imageminGifsicle()] }).then((files) => {
-            $('#' + id + ' .new-size').text(files[0].data.length >= 1024 ? (files[0].data.length / 1024).toFixed(1) + 'KB' : files[0].data.length + 'B');
-            let ratio = ((data.length - files[0].data.length) / data.length * 100).toFixed(0) + '%';
-            $('#' + id + ' .compression-ratio').text(ratio);
-            $('#' + id + ' .base64').data('path', item);
-            $('#' + id + ' .location').data('path', item);
-            $('#' + id + '> .iconfont').addClass('icon-success');
-            $('#' + id + ' .compression-ratio').html(`<i class="iconfont icon-reduce"></i>${ratio}`);
-            image.compress = {
-              size: calcSize(files[0].data.length),
-              length: files[0].length,
-              blobUrl: URL.createObjectURL(generateBlob(files[0].data, originExtname + '/image')),
-              data: files[0].data
-            }
-          });
           IMG_ARRAY.push(image);
         });
       });
@@ -337,13 +280,6 @@
       $('.img-list').append(html);
       $('.drag-box').hide();
     }
-  </script>
-  <script src="https://qidian.gtimg.com/c/=/lulu/theme/peak/js/common/ui/Follow.js,/lulu/theme/peak/js/common/ui/Tips.js,/lulu/theme/peak/js/common/ui/Range.js"></script>
-  <script>
-        var mozjpeg = $('#mozjpeg').range();
-        var pngquant = $('#pngquant').range();
-        var gifsicle = $('#gifsicle').range();
-        var webp = $('#webp').range();
   </script>
 </body>
 
