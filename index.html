@@ -6,7 +6,7 @@
   <title>lightimage</title>
   <link rel="stylesheet" href="./styles/index.css">
   <link rel="stylesheet" href="./styles/normalize.css">
-  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_cnuehv9rdm4.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_6kh7izlknt.css">
 </head>
 
 <body>
@@ -16,21 +16,21 @@
       <span class="iconfont icon-close"></span>
     </div>
   </div>
+  <div class="top-bar">
+    <li class="top-bar-item">
+      <i class="iconfont icon-cancel" title="撤销"></i>
+    </li>
+    <li class="top-bar-item">
+      <i class="iconfont icon-delete" title="删除"></i>
+    </li>
+    <li class="top-bar-item">
+      <i class="iconfont icon-download-all" title="下载"></i>
+    </li>
+    <li class="top-bar-item">
+      <i class="iconfont icon-setting" title="配置"></i>
+    </li>
+  </div>
   <div class="img-list-container">
-    <div class="top-bar">
-      <li class="top-bar-item">
-        <i class="iconfont icon-cancel" title="撤销"></i>
-      </li>
-      <li class="top-bar-item">
-        <i class="iconfont icon-delete" title="删除"></i>
-      </li>
-      <li class="top-bar-item">
-        <i class="iconfont icon-download-all" title="下载"></i>
-      </li>
-      <li class="top-bar-item">
-        <i class="iconfont icon-setting" title="配置"></i>
-      </li>
-    </div>
     <ul class="img-list" ondrop="drop(event)" ondragover="allowDrop(event)">
       <!-- <li class="img-list-item">
         <i class="iconfont icon-success"></i>
@@ -69,7 +69,7 @@
         </div>
       </li> -->
       <div class="drag-box">
-        <p>请将图片拖入窗口中<br>（支持JPG PNG GIF格式）</p>
+        <p>请将图片拖入窗口中<br>（支持JPG PNG WEBP格式）</p>
         <i class="iconfont icon-image"></i>
       </div>
     </ul>
@@ -82,87 +82,95 @@
     const shortid = require('shortid');
     const util = require('./util.js');
     const glob = require('glob');
+    const isPng = require('is-png');
+    const isJpg = require('is-jpg');
+    const isCwebpReadable = require('is-cwebp-readable');
     const IMG_ARRAY = [];
     window.$ = window.jQuery = require('./jquery.min.js');
     const URL = window.URL;
-    ipcRenderer.on('filepaths', function (event, files) {
-      let filePaths = getFilePaths(files);
-      generateImage(filePaths);
-    });
-    $('.img-list').on('click', '.location', function (e) {
-      let path = $(this).data('path');
-      shell.showItemInFolder(path);
-    });
-    $('.right-tool .iconfont').click(function (e) {
-      let index = $(this).index();
-      let window = remote.BrowserWindow.getFocusedWindow();
-      if (index === 0) {
-        window.minimize();
-      } else {
-        window.close();
-      }
-      e.stopPropagation();
-    });
-    $('.img-list').on('click', '.base64', function (e) {
-      let path = $(this).data('path');
-      base64Img.base64(path, (err, data) => {
-        if (err) {
-          alert('出错了');
-        } else {
-          clipboard.writeText(data);
-          $(this).find('.text').addClass('show');
-          setTimeout(() => {
-            $(this).find('.text').removeClass('show');
-          }, 400);
-        }
-      });
-      e.stopPropagation();
-    });
 
-    $('.img-list').on('click', '.compare', function (e) {
-      let id = $(e.target).parents('.img-list-item').attr('id');
-      let data = [];
-      let compare = {};
-      for(let i = 0; i < IMG_ARRAY.length;i++) {
-        if(IMG_ARRAY[i].id === id) {
-          compare.id = id
+    function clickFunc() {
+      $('.img-list').on('click', '.location', function (e) {
+        let path = $(this).data('path');
+        shell.showItemInFolder(path);
+      });
+      $('.right-tool .iconfont').click(function (e) {
+        let index = $(this).index();
+        let window = remote.BrowserWindow.getFocusedWindow();
+        if (index === 0) {
+          window.minimize();
+        } else {
+          window.close();
         }
-        data.push({
-          id: IMG_ARRAY[i].id,
-          name: IMG_ARRAY[i].name,
-          originExtname: IMG_ARRAY[i].originExtname,
-          origin: {
-            size: IMG_ARRAY[i].origin.size,
-            length: IMG_ARRAY[i].origin.length,
-            blobUrl: IMG_ARRAY[i].origin.blobUrl
-          },
-          webp: {
-            size: IMG_ARRAY[i].webp.size,
-            length: IMG_ARRAY[i].webp.length,
-            blobUrl: IMG_ARRAY[i].webp.blobUrl
-          },
-          compress: {
-            size: IMG_ARRAY[i].compress.size,
-            length: IMG_ARRAY[i].compress.length,
-            blobUrl: IMG_ARRAY[i].compress.blobUrl
+        e.stopPropagation();
+      });
+      $('.img-list').on('click', '.base64', function (e) {
+        let path = $(this).data('path');
+        base64Img.base64(path, (err, data) => {
+          console.log(err);
+          if (err) {
+            alert('出错了');
+          } else {
+            clipboard.writeText(data);
+            $(this).find('.text').addClass('show');
+            setTimeout(() => {
+              $(this).find('.text').removeClass('show');
+            }, 400);
           }
         });
-      }
-      compare.list = data;
-      ipcRenderer.send('compare', compare);
-      ipcRenderer.send('imglist', IMG_ARRAY);
-    });
+        e.stopPropagation();
+      });
+
+      $('.img-list').on('click', '.compare', function (e) {
+        let id = $(e.target).parents('.img-list-item').attr('id');
+        let data = [];
+        let compare = {};
+        for(let i = 0; i < IMG_ARRAY.length;i++) {
+          if(IMG_ARRAY[i].id === id) {
+            compare.id = id
+          }
+          data.push({
+            id: IMG_ARRAY[i].id,
+            name: IMG_ARRAY[i].name,
+            originExtname: IMG_ARRAY[i].originExtname,
+            origin: {
+              length: IMG_ARRAY[i].origin.data.length,
+              blobUrl: IMG_ARRAY[i].origin.blobUrl
+            },
+            webp: {
+              length: IMG_ARRAY[i].webp.data.length,
+              blobUrl: IMG_ARRAY[i].webp.blobUrl
+            },
+            compress: {
+              length: IMG_ARRAY[i].compress.data.length,
+              blobUrl: IMG_ARRAY[i].compress.blobUrl
+            }
+          });
+        }
+        compare.list = data;
+        ipcRenderer.send('compare', compare);
+        ipcRenderer.send('imglist', IMG_ARRAY);
+      });
+
+      $('.img-list').on('click', '.img-list-item', function () {
+        $(this).addClass('active').siblings().removeClass('active');
+      });
+    }
+
+    clickFunc();
+
     function allowDrop(event) {
       event.preventDefault();
     }
-    function drop(event) {
+    async function drop(event) {
       let files = [];
       for (let i = 0; i < event.dataTransfer.files.length; i++) {
         files.push(event.dataTransfer.files[i].path);
       }
       let filePaths = getFilePaths(files);
-      generateImage(filePaths);
+      await generateImage(filePaths);
     }
+
 
     function getFilePaths(fileArray) {
       let filePaths = [];
@@ -171,11 +179,11 @@
         if (stat.isDirectory()) {
           let files = glob.sync(path.join(fileArray[i], "**/**"), { matchBase: true });
           let imageFiles = files.filter(function (item) {
-            return /\.(png|jpg|gif)$/.test(item)
+            return /\.(png|jpg|jpeg)$/.test(item)
           });
           filePaths.push(...imageFiles);
         } else {
-          if (/\.(png|jpg|gif)$/.test(fileArray[i])) {
+          if (/\.(png|jpg|jpeg)$/.test(fileArray[i])) {
             filePaths.push(fileArray[i]);
           } else {
             console.log('拖入的存在非图片格式文件');
@@ -184,66 +192,60 @@
       }
       return filePaths;
     }
-    
-    async function generateWebp(path) {
-      return await util.generatePng(2,path);
-    }
-    function calcSize(size) {
-      if(size >= 1024 * 1024) {
-        return (size / (1024 * 1024)).toFixed(2) + 'M';
-      } else if(size >= 1024){
-        return (size / 1024).toFixed(1) + 'KB';
-      } else {
-        return size + 'B';
-      }
-    }
 
-    function generateBlob(data,mine) {
-      return new Blob([data],{type: mine});
-    };
-    
-    function generateImage(filePaths) {
+    async function generateImage(filePaths) {
       let html = '';
-      filePaths.forEach(function (item) {
+      let promise = [];
+      for(let i = 0;i < filePaths.length;i++) {
+        let item = filePaths[i];
         let originExtname = path.extname(item).slice(1);
         let filename = path.basename(item, path.extname(item));
-        fs.readFile(item, async function (err, data) {
-          let id = shortid.generate();
-          let webpFile = await generateWebp(item);
-          console.log(webpFile);
-          let webpBlob = generateBlob(webpFile[0].data,'webp/image');
-          let originBlob = generateBlob(data,originExtname + '/image');
-          let image = {
-            id: id,
-            filename: filename,
-            filepath: path.dirname(item),
-            originExtname: originExtname,
-            origin: {
-              size: calcSize(data.length),
-              length: data.length,
-              blobUrl: URL.createObjectURL(originBlob),
-              data: data
-            },
-            webp: {
-              size: calcSize(webpFile[0].data.length),
-              length: webpFile[0].data.length,
-              blobUrl: URL.createObjectURL(webpBlob),
-              data: webpFile[0].data
-            }
+        let fileBuffer = fs.readFileSync(item);
+        let id = shortid.generate();
+        let webpFile = await util.generateWebp(fileBuffer);
+        let webpBlob = util.generateBlob(webpFile,'webp/image');
+        let originBlob = util.generateBlob(fileBuffer,originExtname + '/image');
+        let image = {
+          id: id,
+          filename: filename,
+          filepath: item,
+          originExtname: originExtname,
+          origin: {
+            blobUrl: URL.createObjectURL(originBlob),
+            data: fileBuffer
+          },
+          webp: {
+            blobUrl: URL.createObjectURL(webpBlob),
+            data: webpFile
           }
-          generateImageListItem(image, path.extname(item));
-          IMG_ARRAY.push(image);
-        });
-      });
+        }
+        if(isJpg(fileBuffer)) {
+          let compressJpg = await util.generateJpg(fileBuffer);
+          let jpgBlob = util.generateBlob(fileBuffer,originExtname + '/image');
+          let compress = {
+            blobUrl: URL.createObjectURL(jpgBlob),
+            data: compressJpg
+          }
+          image.compress = compress;
+        } else if(isPng(fileBuffer)) {
+          let compressPng = await util.generatePng(fileBuffer);
+          let pngBlob = util.generateBlob(fileBuffer,originExtname + '/image');
+          let compress = {
+            blobUrl: URL.createObjectURL(pngBlob),
+            data: compressPng
+          }
+          image.compress = compress;
+        }
+        promise.push(generateImageListItem(image));
+        IMG_ARRAY.push(image);
+      }
+      Promise.all(promise)
     }
-    $('.img-list').on('click', '.img-list-item', function () {
-      $(this).addClass('active').siblings().removeClass('active');
-    });
 
-    function generateImageListItem(image) {
+    async function generateImageListItem(image) {
       let  html = `
         <li class="img-list-item" id="${image.id}">
-          <i class="iconfont"></i>
+          <i class="iconfont icon-success"></i>
           <div class="thumb">
             <img src="${image.origin.blobUrl}" alt="缩略图">
           </div>
@@ -253,26 +255,27 @@
             </div>
             <div class="text">
               <div class="old-size">
-                ${image.origin.size}
+                ${util.calcSize(image.origin.data.length)}
               </div>
               <div class="separator">/</div>            
               <div class="new-size">
+                ${util.calcSize(image.compress.data.length)}
               </div>
-              <div class="compression-ratio">
-                <i class="iconfont icon-reduct"></i>
+              <div class="compression-ratio ${image.compress.data.length < image.origin.data.length ? '' : 'increase'}">
+                ${image.compress.data.length < image.origin.data.length ? '<i class="iconfont icon-reduce"></i>' + util.calcRatio(image.origin.data.length,image.compress.data.length)  : '<i class="iconfont icon-increase"></i>' + util.calcRatio(image.origin.data.length,image.compress.data.length)}
               </div>
             </div>
           </div>
           <div class="btn-box">
-            <div class="base64">
+            <div class="base64" data-path="${image.filepath}">
               <span class="text">复制成功</span>
               <i class="iconfont icon-base64" title="base64"></i>
             </div>
             <div class="compare">
-              <i class="iconfont icon-compare" title="对比" ></i>
+              <i class="iconfont icon-compare" title="对比"></i>
             </div>
-            <div class="location">
-              <i class="iconfont icon-location" title="定位" data-path="${image.filepath}"></i>
+            <div class="location" data-path="${image.filepath}">
+              <i class="iconfont icon-location" title="定位"></i>
             </div>
           </div>
         </li>

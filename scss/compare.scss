@@ -80,9 +80,21 @@ html,body{
   left: 0;
   right: 0;
   background: #424242;
+  &.default{
+    background: #424242;
+  }
+  &.white{
+    background: #fff;
+  }
+  &.transparent {
+    background-color: #fff;
+    background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee), linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee);
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px;
+  }
   .line{
     height: 100%;
-    width: 2px;
+    width: 4px;
     bottom: 0;
     background-color: #2196f3;
     position: absolute;
@@ -114,6 +126,23 @@ html,body{
   right: 0;
   top: 65px;
   bottom: 0;
+  overflow-y: scroll;
+  &::-webkit-scrollbar  
+  {  
+    width: 8px;  
+    height: 8px;  
+    background-color: #424242;  
+  }
+  &::-webkit-scrollbar-track  
+  {  
+    border-radius: 4px;  
+    background-color: #424242;  
+  }
+  &::-webkit-scrollbar-thumb  
+  {  
+    border-radius: 4px;  
+    background-color: #363738;  
+  }
   .file-list-item{
     padding: 10px;
     text-align: center;
@@ -143,13 +172,16 @@ html,body{
     display: flex;
     align-items: center;
     .label{
+      flex: 0 0 90px;
       width: 90px;
     }
     .progress{
-      width: 400px;
+      width: 0px;
       height: 8px;
       background: #2196f3;
       margin-right: 15px;
+      transform-origin: left center;
+      transition: width 0.3s linear;
     }
     .size{
       .iconfont{

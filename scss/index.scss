@@ -46,7 +46,7 @@ html,body{
     right: 0;
     top: 0;
     display: flex;
-    width: 120px;
+    width: 80px;
     -webkit-app-region: no-drag;
     .iconfont{
       flex: 1;
@@ -63,13 +63,41 @@ html,body{
     }
   }
 }
+.top-bar{
+  position: absolute;
+  top: 30px;
+  height: 30px;
+  line-height: 30px;
+  background: rgba(54, 55, 56, 0.6);
+  color: #fff;
+  font-size: 20px;
+  display: flex;
+  left: 0;
+  right: 0;
+  &-item{
+    flex: 0 0 30px;
+    width: 30px;
+    text-align: center;
+    color: #fff;
+    &:last-child{
+      position: absolute;
+      right: 0;
+      top: 0;
+      opacity: 1;
+    }
+    &:hover{
+      cursor: pointer;
+      background: #363738;
+    }
+  }
+}
 .img-list-container{
   box-sizing: border-box;
   position: absolute;
-  top: 30px;
+  top: 60px;
   bottom: 0;
   width: 100%;
-  overflow-x: auto;
+  overflow-y: scroll;
   &::-webkit-scrollbar  
   {  
     width: 8px;  
@@ -86,34 +114,6 @@ html,body{
     border-radius: 4px;  
     background-color: #363738;  
   }
-  .top-bar{
-    position: absolute;
-    top: 0;
-    height: 30px;
-    line-height: 30px;
-    background: rgba(54, 55, 56, 0.6);
-    color: #fff;
-    font-size: 20px;
-    display: flex;
-    left: 0;
-    right: 0;
-    &-item{
-      flex: 0 0 30px;
-      width: 30px;
-      text-align: center;
-      color: #fff;
-      &:last-child{
-        position: absolute;
-        right: 0;
-        top: 0;
-        opacity: 1;
-      }
-      &:hover{
-        cursor: pointer;
-        background: #363738;
-      }
-    }
-  }
   .img-list{
     min-height: 100%;
     overflow-x: auto;
@@ -123,13 +123,13 @@ html,body{
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
-    padding: 15px 20px 15px 40px;
+    padding: 15px 20px 15px 50px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
     position: relative;
     > .iconfont{
       position: absolute;
-      left: 10px;
+      left: 20px;
       top: 50%;
       font-size: 20px;
       transform: translateY(-50%);
@@ -152,6 +152,7 @@ html,body{
       margin-right: 15px;
       font-size: 0;
       border-radius: 4px;
+      overflow: hidden;
       > img{
         width: 100%;
         height: 100%;
@@ -173,6 +174,7 @@ html,body{
       .text{
         display: flex;
         font-size: 12px;
+        line-height: 1.5;
         color: rgba(255, 255, 255, 0.7);
         .separator{
           margin: 0 3px;
@@ -181,7 +183,7 @@ html,body{
           margin-left:15px;
           color: #76ff03;
           .iconfont{
-            font-size: 10px;
+            font-size: 14px;
           }
         }
       }
@@ -247,6 +249,7 @@ html,body{
     width: 100%;
     line-height: 1.5;
     color: #fff;
+    animation: fontColor 2s linear infinite;
   }
   .iconfont{
     font-size: 80px;
@@ -257,5 +260,17 @@ html,body{
     top: 50%;
     transform: translate(-50%,-50%);
     z-index: -1;
+  }
+}
+
+@keyframes fontColor{
+  0% {
+    color: #fff;
+  }
+  50% {
+    color: #ccc;
+  }
+  100% {
+    color: #fff;
   }
 }

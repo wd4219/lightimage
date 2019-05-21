@@ -7,8 +7,7 @@ const fs = require('fs');
 const execa = require('execa');
 
 module.exports = {
-    async generateJpeg(quality = 75,filePath) {
-        let fileBuffer = fs.readFileSync(filePath);
+    async generateJpg(fileBuffer, quality = 75) {
         let args = ['-copy', 'none', '-optimize'];
         args.push('-outfile', execBuffer.output, execBuffer.input);
         let input = await execBuffer({
@@ -30,8 +29,7 @@ module.exports = {
             throw error;
         });
     },
-    async generatePng(effort = 2 ,filePath) {
-        let fileBuffer = fs.readFileSync(filePath);
+    async generatePng(fileBuffer, effort = 2 ) {
         const args = [
             '-strip',
             'all',
@@ -52,8 +50,7 @@ module.exports = {
             throw error;
         });
     },
-    async generateWebp(effort,quality,filePath){
-        let fileBuffer = fs.readFileSync(filePath);
+    async generateWebp(fileBuffer,effort = 4,quality = 75){
         let args = [];
         args.push('-q', quality);
         args.push('-m', effort)
@@ -66,5 +63,20 @@ module.exports = {
             error.message = error.stderr || error.message;
             throw error;
         });
-    }
+    },
+    calcSize(size) {
+        if(size >= 1024 * 1024) {
+            return (size / (1024 * 1024)).toFixed(2) + 'M';
+        } else if(size >= 1024){
+            return (size / 1024).toFixed(1) + 'KB';
+        } else {
+            return size + 'B';
+        }
+    },
+    calcRatio(origin,compress) {
+        return Math.round(((origin - compress) / origin) * 100).toFixed(0) + '%';
+    },
+    generateBlob(data,mine) {
+        return new Blob([data],{type: mine});
+    },
 };

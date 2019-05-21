@@ -6,8 +6,6 @@ body {
 html, body {
   height: 100%;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
           user-select: none;
 }
 
@@ -93,9 +91,24 @@ html, body {
   background: #424242;
 }
 
+.compare-container.default {
+  background: #424242;
+}
+
+.compare-container.white {
+  background: #fff;
+}
+
+.compare-container.transparent {
+  background-color: #fff;
+  background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee), linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
+
 .compare-container .line {
   height: 100%;
-  width: 2px;
+  width: 4px;
   bottom: 0;
   background-color: #2196f3;
   position: absolute;
@@ -132,6 +145,23 @@ html, body {
   right: 0;
   top: 65px;
   bottom: 0;
+  overflow-y: scroll;
+}
+
+.file-list-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: #424242;
+}
+
+.file-list-container::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background-color: #424242;
+}
+
+.file-list-container::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: #363738;
 }
 
 .file-list-container .file-list-item {
@@ -164,23 +194,26 @@ html, body {
 .info-container .info-item {
   height: 40px;
   line-height: 40px;
-  display: -webkit-box;
-  display: -ms-flexbox;
+  display: -webkit-flex;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
+  -webkit-align-items: center;
           align-items: center;
 }
 
 .info-container .info-item .label {
+  -webkit-flex: 0 0 90px;
+          flex: 0 0 90px;
   width: 90px;
 }
 
 .info-container .info-item .progress {
-  width: 400px;
+  width: 0px;
   height: 8px;
   background: #2196f3;
   margin-right: 15px;
+  -webkit-transform-origin: left center;
+          transform-origin: left center;
+  transition: width 0.3s linear;
 }
 
 .info-container .info-item .size .iconfont {

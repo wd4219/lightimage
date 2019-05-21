@@ -5,11 +5,13 @@ const yazl = require("yazl");
 const zipfile = new yazl.ZipFile();
 let _data = null;
 let IMG_ARRAY = [];
+
 ipcMain.on('compare',function(event,data) {
   _data = data;
-  let compare = new BrowserWindow({frame: false, backgroundColor:'#424242',title: '对比',width: 960,height:720,resizable: false});
+  let compare = new BrowserWindow({frame: false,show:false, backgroundColor:'#424242',title: '对比',width: 960,height:720,resizable: false,webPreferences: {
+    nodeIntegration: true
+  }});
   compare.loadFile('./compare.html');
-  compare.webContents.openDevTools();
   compare.once('ready-to-show',function(){
     compare.show();
   });
@@ -53,11 +55,12 @@ ipcMain.on('download-single-file',function(event,data){
 let win;
 
 function createWindow() {
-  win = new BrowserWindow({ width: 450, height: 700, fullscreenable: false, resizable: false ,frame: false,backgroundColor:'#424242',webPreferences: {
+  win = new BrowserWindow({ width: 450, height: 700,show:false,fullscreenable: false, resizable: false ,frame: false,backgroundColor:'#424242',webPreferences: {
     nodeIntegration: true
   }});
-  //创建菜单
-  win.webContents.openDevTools();
+
+
+  // win.webContents.openDevTools();
   Menu.setApplicationMenu(null);
 
   app.on('ready', function ready() {
@@ -65,7 +68,9 @@ function createWindow() {
   })
   // 然后加载应用的 index.html。
   win.loadFile('index.html');
-
+  win.once('ready-to-show',()=>{
+    win.show();
+  });
 
   // 当 window 被关闭，这个事件会被触发。
   win.on('closed', () => {

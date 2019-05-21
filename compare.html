@@ -7,14 +7,13 @@
   <link rel="stylesheet" href="./styles/normalize.css">
   <link rel="stylesheet" href="./styles/index.css">
   <link rel="stylesheet" href="./styles/compare.css">
-  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_adb2x2i9krd.css">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_863778_6kh7izlknt.css">
 </head>
 
 <body>
   <div class="title-bar">对比
     <div class="right-tool">
       <span class="iconfont icon-min"></span>
-      <span class="iconfont icon-max"></span>
       <span class="iconfont icon-close"></span>
     </div>
   </div>
@@ -74,6 +73,7 @@
     const path = require('path');
     const shortid = require('shortid');
     const glob = require('glob');
+    const util = require('./util.js');
     let scale = 1; //预览缩放比例
     let startX  = 0; //图片拖动的起始点 x轴坐标
     let startY = 0; // 图片拖动的起始点 y轴坐标
@@ -119,10 +119,11 @@
     function generateCompare(data) {
       $('.origin-container img').attr('src', data.origin.blobUrl);
       $('.new-container img').attr('src', data.compress.blobUrl);
-      $('.origin-item .num').text(data.origin.size);
-      $('.compress-item .num').text(data.compress.size);
+      $('.origin-item .num').text(util.calcSize(data.origin.length));
+      $('.origin-item .progress').css({width: '400px'});
+      $('.compress-item .num').text(util.calcSize(data.compress.length));
       $('.compress-item .progress').css({width: (400 * (data.compress.length / data.origin.length)) + 'px'});
-      $('.webp-item .num').text(data.webp.size);
+      $('.webp-item .num').text(util.calcSize(data.webp.length));
       $('.webp-item .progress').css({width: (400 * (data.webp.length / data.origin.length)) + 'px'});
     }
 
@@ -191,27 +192,17 @@
         $('.new-container img').css({'transform': `scale(${scale})`});
       });
 
-      $('.title-bar').dblclick(function () {
-        let window = remote.BrowserWindow.getFocusedWindow();
-        if (!window.isMaximized()) {
-          $(this).find('.iconfont').eq(1).removeClass('icon-max').addClass('icon-reset');
-          window.maximize();
-        } else {
-          $(this).find('.iconfont').eq(1).removeClass('icon-reset').addClass('icon-max');
-          window.unmaximize();
-        }
-      });
       $('.icon-background').on('click', function () {
         $(this).find('.background-select-box').slideToggle();
       });
       $('.icon-background').on('click', 'li', function (e) {
         let index = $(this).index();
         if (index === 0) {
-          $('.compare-container').css({ background: '#424242' });
+          $('.compare-container').addClass('default').removeClass('transparent').removeClass('white');
         } else if (index === 2) {
-          $('.compare-container').css({ background: `url('./images/background.png') repeat` });
+          $('.compare-container').addClass('transparent').removeClass('default').removeClass('white');
         } else {
-          $('.compare-container').css({ background: '#fff' });
+          $('.compare-container').addClass('white').removeClass('default').removeClass('transparent');
         }
         $(this).addClass('active').siblings().removeClass('active');
         e.stopPropagation();
@@ -226,15 +217,7 @@
       $('.right-tool .iconfont').click(function () {
         let index = $(this).index();
         let window = remote.BrowserWindow.getFocusedWindow();
-        if (index === 1) {
-          if (!window.isMaximized()) {
-            $(this).removeClass('icon-max').addClass('icon-reset');
-            window.maximize();
-          } else {
-            $(this).removeClass('icon-reset').addClass('icon-max');
-            window.unmaximize();
-          }
-        } else if (index === 0) {
+        if (index === 0) {
           window.minimize();
         } else {
           window.close();
@@ -268,6 +251,13 @@
           type: 'compress',
         };
         ipcRenderer.send('download-single-file',download);
+      });
+
+      $('.file-list').on('click','.file-list-item',function(){
+        let index = $(this).index();
+        $(this).addClass('active').siblings().removeClass('active');
+        let data = compare.list[index];
+        generateCompare(data);
       });
     }
   </script>
